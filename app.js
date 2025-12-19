@@ -649,6 +649,28 @@ async function init(){
   initCocktailAdd();
   initWheel();
   registerSW();
+  const grid = $("grid");
+  if(grid && !grid._delegated){
+    grid._delegated = true;
+    grid.addEventListener("click",(e)=>{
+      const card = e.target.closest("[data-cid]");
+      if(!card) return;
+      if(e.target.closest("button, a, input, textarea, select")) return;
+      const id = card.getAttribute("data-cid");
+      if(id) openCocktailById(id);
+    });
+  }
+
+  const wp = $("wheel-picked");
+  if(wp && !wp._wired){
+    wp._wired = true;
+    wp.style.cursor = "pointer";
+    wp.addEventListener("click", ()=>{
+      const id = wp.getAttribute("data-cid");
+      if(id) openCocktailById(id);
+    });
+  }
+
 }
 
 $("chip-liked").addEventListener("click",()=>chipToggle($("chip-liked")));
@@ -1349,4 +1371,15 @@ function initLinkImporter(){
     s._wired = true;
     s.addEventListener("click", saveImportedCocktail);
   }
+}
+
+function openCocktailById(id){
+  const all = (typeof COCKTAILS!=="undefined" ? COCKTAILS : []).concat((USER && USER.cocktails) ? USER.cocktails : []);
+  const c = all.find(x=>x.id===id);
+  if(!c) return;
+  if(typeof showCocktail==="function") return showCocktail(id);
+  if(typeof openCocktail==="function") return openCocktail(id);
+  if(typeof openCocktailDialog==="function") return openCocktailDialog(id);
+  // fallback: try to set selected and re-render
+  if(typeof setActiveCocktail==="function") return setActiveCocktail(id);
 }
