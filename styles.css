@@ -60,3 +60,6 @@ details.acc>summary::-webkit-details-marker{display:none}
 
 .miniSelect,.miniInput{background:#0f0f0f;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:9px 10px}
 .miniSelect{min-width:160px}
+
+.glassIcon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line);border-radius:10px;font-size:16px}
+.cocktailHeader{display:flex;align-items:center;justify-content:space-between;gap:10px}

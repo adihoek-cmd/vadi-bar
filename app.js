@@ -2,6 +2,7 @@ let BASE=null;
 let USER={inventory:null,cocktails:[]};
 let CURRENT=null;
 let INV_CAT='spirit';
+let INV_MISSING_ONLY=false;
 
 const $=id=>document.getElementById(id);
 const normalize=s=>(s||"").toLowerCase();
@@ -79,6 +80,7 @@ function chipToggle(chip){
   const pressed = chip.getAttribute("aria-pressed")==="true";
   chip.setAttribute("aria-pressed", pressed ? "false":"true");
   renderCocktails();
+  initWheel();
 }
 
 function badgeHTML(c, inv){
@@ -95,7 +97,7 @@ function cardHTML(c, inv){
   return `<div class="card" data-id="${c.id}">
     <div class="row">
       <div>
-        <div class="title">${c.name}</div>
+        <div class="cocktailHeader"><div class="title">${c.name}</div><div class="glassIcon" title="${c.glass||""}">${glassEmoji(c.glass)}</div></div>
         <div class="meta">${(c.glass||"").toUpperCase()} · ${c.source||""}</div>
       </div>
     </div>
@@ -158,6 +160,28 @@ function renderInventory(){
     });
   });
 
+  // Missing filter chips
+  if($("inv-filter")){
+    $("inv-filter").innerHTML = [
+      `<div class="chip" data-miss="0" aria-pressed="${!INV_MISSING_ONLY}">All</div>`,
+      `<div class="chip" data-miss="1" aria-pressed="${INV_MISSING_ONLY}">Missing</div>`,
+      `<button class="btn" id="btn-copy-missing" style="margin-left:auto">Copy missing list</button>`
+    ].join("");
+    document.querySelectorAll("#inv-filter .chip").forEach(ch=>{
+      ch.addEventListener("click",()=>{
+        INV_MISSING_ONLY = ch.getAttribute("data-miss")==="1";
+        renderInventory();
+      });
+    });
+    $("btn-copy-missing").addEventListener("click",async()=>{
+      const invNow = mergedInventory();
+      const miss = (invNow.items||[]).filter(it=>it.category===INV_CAT && !it.have).map(it=>`${it.kind} — ${it.label}`);
+      const txt = miss.length ? miss.join("\n") : "Nothing missing.";
+      try{ await navigator.clipboard.writeText(txt); alert("Copied."); }catch(e){ alert(txt); }
+    });
+  }
+
+
   // Grouping rules (by kind), with special: all rum kinds -> "Rum"
   const norm = s => (s||"").toLowerCase();
   const groupOf = (kind)=>{
@@ -165,7 +189,7 @@ function renderInventory(){
     return kind;
   };
 
-  const catItems = items.filter(it=>it.category===INV_CAT);
+  const catItems = items.filter(it=>it.category===INV_CAT).filter(it=>INV_MISSING_ONLY ? !it.have : true);
   const byGroup = new Map();
   for(const it of catItems){
     const g = groupOf(it.kind);
@@ -263,6 +287,7 @@ function renderInventory(){
     cb.addEventListener("change",()=>{
       setItemHave(cb.getAttribute("data-cat"), cb.getAttribute("data-kind"), cb.getAttribute("data-label"), cb.checked);
       renderCocktails();
+  initWheel();
       renderInventory(); // refresh counts
     });
   });
@@ -294,6 +319,7 @@ function renderInventory(){
       input.value="";
       msg.textContent=`Added: ${label}`;
       renderInventory(); renderCocktails();
+  initWheel();
     });
   });
 
@@ -403,6 +429,7 @@ function deleteCurrentIfUser(){
   saveUser();
   $("dlg").close();
   renderCocktails();
+  initWheel();
 }
 
 function setView(which){
@@ -413,6 +440,7 @@ function setView(which){
   document.querySelectorAll(".navbtn").forEach(b=>b.classList.remove("active"));
   $(`nav-${which}`).classList.add("active");
   if(which==="cocktails") renderCocktails();
+  initWheel();
   if(which==="inventory") renderInventory();
 }
 
@@ -460,6 +488,7 @@ function addRecipeFromForm(){
   saveUser();
   $("r-msg").textContent=`Saved: ${name}`;
   renderCocktails();
+  initWheel();
 }
 
 function clearRecipeForm(){
@@ -480,6 +509,7 @@ function addInventoryItem(){
   $("add-kind").value=""; $("add-label").value="";
   msg.textContent=`Added: ${label}`;
   renderInventory(); renderCocktails();
+  initWheel();
 }
 
 async function scanBarcodeToInput(targetInput, targetMsg){
@@ -513,7 +543,25 @@ async function scanBarcodeToInput(targetInput, targetMsg){
           if(codes && codes.length){
             const code=codes[0].rawValue||"";
             if(targetInput){ targetInput.value=code; } else { $("add-label").value=code; }
-            msg.textContent=`Scanned: ${code} (edit to actual bottle name)`;
+  const info = await lookupBarcodeOnline(code);
+  if(info){
+    const guessText = `${info.name} ${info.brands} ${info.categories}`.trim();
+    const kindGuess = inferKindFromText(guessText) || inferKindFromText(info.categories) || null;
+    const labelGuess = (info.name || info.brands || code).trim();
+    if(targetInput){ targetInput.value = labelGuess; } else { $("add-label").value = labelGuess; }
+    if(kindGuess){
+      const kindEl = $("add-kind"); const catEl = $("add-cat");
+      if(kindEl) kindEl.value = kindGuess;
+      if(catEl) catEl.value = inferCategoryFromKind(kindGuess);
+      msg.textContent = `Found: ${labelGuess} • Suggested: ${kindGuess}. Check/edit before adding.`;
+    }else{
+      msg.textContent = `Found: ${labelGuess}. Check/edit before adding.`;
+    }
+  }else{
+    msg.textContent = `Scanned: ${code} (edit to actual bottle name)`;
+  }
+
+            msg.textContent=`Scanned: ${code} — looking up…`;
             await close(); return;
           }
         }catch(e){}
@@ -550,6 +598,7 @@ function importJSON(file){
       migrateInventoryIfNeeded();
       saveUser();
       renderInventory(); renderCocktails();
+  initWheel();
       alert("Imported successfully.");
     }catch(e){ alert("Import failed: invalid JSON."); }
   };
@@ -576,6 +625,7 @@ async function init(){
   loadUser();
   await loadBase();
   renderCocktails();
+  initWheel();
   registerSW();
 }
 
@@ -614,6 +664,7 @@ $("btn-reset-inv").addEventListener("click",()=>{
   localStorage.removeItem("vadi.user.inventory");
   USER.inventory=null;
   renderInventory(); renderCocktails();
+  initWheel();
   alert("Inventory reset. You should now see per-bottle items from the base list.");
 });
 
@@ -626,8 +677,162 @@ $("btn-restore-inv").addEventListener("click",()=>{
   USER.inventory = {items: BASE.inventory.items.map(it=>({category:it.category, kind:it.kind, label:it.label, have:true}))};
   saveUser();
   renderInventory(); renderCocktails();
+  initWheel();
   alert("Restored default inventory.");
 });
 
 
 init();
+// Glass icon helpers
+function glassEmoji(glass){
+  const g=(glass||"").toLowerCase();
+  if(g.includes("rocks")) return "🥃";
+  if(g.includes("coupe")||g.includes("martini")) return "🍸";
+  if(g.includes("highball")||g.includes("collins")) return "🥤";
+  if(g.includes("wine")) return "🍷";
+  if(g.includes("mug")) return "☕";
+  return "🍹";
+}
+
+// --- Barcode online lookup (best-effort, no API key) ---
+async function lookupBarcodeOnline(barcode){
+  const url = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json`;
+  try{
+    const resp = await fetch(url, {cache:"no-cache"});
+    if(!resp.ok) return null;
+    const j = await resp.json();
+    if(!j || j.status !== 1 || !j.product) return null;
+    const p = j.product;
+    const name = (p.product_name || p.product_name_en || "").trim();
+    const brands = (p.brands || "").split(",")[0]?.trim() || "";
+    const categories = (p.categories || p.categories_tags || "").toString().toLowerCase();
+    return {name, brands, categories, raw:p};
+  }catch(e){ return null; }
+}
+
+function inferKindFromText(text){
+  const t=(text||"").toLowerCase();
+  const rules=[
+    ["gin","Gin"],["vodka","Vodka"],["bourbon","Bourbon"],["rye","Rye whiskey"],
+    ["mezcal","Mezcal"],["tequila","Tequila"],["cognac","Cognac/Brandy"],["brandy","Cognac/Brandy"],
+    ["vermouth","Sweet vermouth"],["campari","Campari"],["aperol","Aperol"],["chartreuse","Green Chartreuse"],
+    ["fernet","Fernet"],["rum","Rum"],["cachaca","Cachaça"],["arak","Anise spirit"],["ouzo","Anise spirit"],["pernod","Anise spirit"]
+  ];
+  for(const [k,v] of rules){ if(t.includes(k)) return v; }
+  return null;
+}
+function inferCategoryFromKind(kind){
+  const k=(kind||"").toLowerCase();
+  const modifier=["vermouth","campari","aperol","chartreuse","fernet","amaro","liqueur","cassis","triple sec","bitters"];
+  if(modifier.some(x=>k.includes(x))) return "modifier";
+  return "spirit";
+}
+
+// --- Wheel of Fortune ---
+let WHEEL_MODE = "can"; // "can" or "all"
+let wheelState = {spinning:false, angle:0, lastPick:null};
+
+function getWheelCocktails(){
+  const list = (BASE?.cocktails||[]).slice();
+  if(WHEEL_MODE==="all") return list;
+  const inv=mergedInventory();
+  const haveKinds = new Set((inv.items||[]).filter(i=>i.have).map(i=>i.kind));
+  return list.filter(c=> (c.needs||[]).every(n=>haveKinds.has(n.kind)));
+}
+
+function drawWheel(names, angle){
+  const canvas = $("wheelCanvas");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width, h = canvas.height;
+  const cx=w/2, cy=h/2;
+  const r = Math.min(w,h)/2 - 10;
+  ctx.clearRect(0,0,w,h);
+  if(!names.length){
+    ctx.font="16px system-ui";
+    ctx.fillStyle="#bbb";
+    ctx.textAlign="center";
+    ctx.fillText("No cocktails available", cx, cy);
+    return;
+  }
+  const n = names.length;
+  const step = (Math.PI*2)/n;
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(angle);
+  for(let i=0;i<n;i++){
+    ctx.beginPath(); ctx.moveTo(0,0);
+    ctx.arc(0,0,r, i*step, (i+1)*step);
+    ctx.closePath();
+    ctx.fillStyle = i%2===0 ? "#1a1a1a" : "#111";
+    ctx.fill();
+    ctx.strokeStyle="#2a2a2a"; ctx.stroke();
+
+    ctx.save();
+    ctx.rotate(i*step + step/2);
+    ctx.textAlign="right";
+    ctx.fillStyle="#ddd";
+    ctx.font="12px system-ui";
+    const label = names[i].length>22 ? names[i].slice(0,22)+"…" : names[i];
+    ctx.fillText(label, r-10, 4);
+    ctx.restore();
+  }
+  ctx.restore();
+
+  // pointer
+  ctx.fillStyle="#ffcc66";
+  ctx.beginPath();
+  ctx.moveTo(cx, cy-r-2);
+  ctx.lineTo(cx-10, cy-r-22);
+  ctx.lineTo(cx+10, cy-r-22);
+  ctx.closePath(); ctx.fill();
+}
+
+function easeOutCubic(t){ return 1 - Math.pow(1-t,3); }
+
+function spinWheel(){
+  if(wheelState.spinning) return;
+  const list = getWheelCocktails();
+  const names = list.map(c=>c.name);
+  if(!names.length){
+    $("wheelResult").textContent = "Nothing available to spin. Turn on more inventory or switch mode.";
+    return;
+  }
+  const n = names.length;
+  const step = (Math.PI*2)/n;
+  const pick = Math.floor(Math.random()*n);
+  wheelState.lastPick = list[pick];
+  const spins = 6 + Math.random()*3;
+  const targetAngle = (Math.PI*2)*spins + (Math.PI*2) - (pick*step + step/2);
+  const start = performance.now();
+  const duration = 2200;
+  wheelState.spinning = true;
+  const startAngle = wheelState.angle;
+
+  function frame(now){
+    const t = Math.min(1, (now-start)/duration);
+    const a = startAngle + targetAngle*easeOutCubic(t);
+    wheelState.angle = a;
+    drawWheel(names, a);
+    if(t<1) requestAnimationFrame(frame);
+    else{
+      wheelState.spinning=false;
+      const c = wheelState.lastPick;
+      $("wheelResult").innerHTML = `<b>${c.name}</b> • ${glassEmoji(c.glass)} ${c.glass||""}<br><span class="small">${c.method||""}</span>`;
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function initWheel(){
+  const btn = $("btn-spin");
+  const modeBtn = $("btn-wheel-mode");
+  if(btn) btn.addEventListener("click", spinWheel);
+  if(modeBtn) modeBtn.addEventListener("click", ()=>{
+    WHEEL_MODE = (WHEEL_MODE==="can") ? "all" : "can";
+    modeBtn.textContent = (WHEEL_MODE==="can") ? "Mode: Can Make" : "Mode: All";
+    const list = getWheelCocktails();
+    drawWheel(list.map(c=>c.name), wheelState.angle);
+    $("wheelResult").textContent = "";
+  });
+  const list = getWheelCocktails();
+  drawWheel(list.map(c=>c.name), 0);
+}
