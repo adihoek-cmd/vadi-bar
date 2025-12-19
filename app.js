@@ -1195,6 +1195,59 @@ function extractJsonLd(html){
   return null;
 }
 
+
+function parseLiquorTextFallback(text){
+  // Fallback for Liquor.com pages fetched via r.jina.ai where script tags may be stripped.
+  const lines = (text||"").split(/\r?\n/).map(l=>l.trim()).filter(l=>l.length);
+  if(!lines.length) return null;
+
+  // Name: first heading-like line
+  let name = lines[0];
+  // Often jina output starts with the URL; skip that
+  if(/^https?:\/\//i.test(name) && lines.length>1) name = lines[1];
+  name = name.replace(/^#+\s*/,"");
+
+  // Find Ingredients section
+  const idxIng = lines.findIndex(l=>/^ingredients\b/i.test(l));
+  const idxDir = lines.findIndex(l=>/^(directions|instructions|method)\b/i.test(l));
+  let ingredients = [];
+  if(idxIng>=0){
+    const end = (idxDir>idxIng? idxDir : Math.min(lines.length, idxIng+40));
+    for(let i=idxIng+1;i<end;i++){
+      const l = lines[i];
+      if(/^(directions|instructions|method)\b/i.test(l)) break;
+      if(/^(nutrition|related|more recipes|advertisement)\b/i.test(l)) break;
+      // bullets or plain lines
+      const cleaned = l.replace(/^[-*•]\s*/,"");
+      // ignore obvious non-ingredient lines
+      if(cleaned.length<2) continue;
+      if(/^\d+\s*mins?\b/i.test(cleaned)) continue;
+      if(/^\d+\s*servings?\b/i.test(cleaned)) continue;
+      ingredients.push(cleaned);
+    }
+  }
+
+  // Directions
+  let steps = "";
+  if(idxDir>=0){
+    const end = Math.min(lines.length, idxDir+80);
+    const stepLines = [];
+    for(let i=idxDir+1;i<end;i++){
+      const l = lines[i];
+      if(/^(nutrition|related|more recipes|advertisement)\b/i.test(l)) break;
+      stepLines.push(l.replace(/^[-*•]\s*/,""));
+    }
+    steps = stepLines.join(" ");
+  }
+
+  if(!ingredients.length && !steps) return null;
+
+  return {
+    name,
+    recipeIngredient: ingredients,
+    recipeInstructions: steps
+  };
+}
 function recipeToCocktail(recipe){
   const name = recipe.name || "Imported cocktail";
   const ing = (recipe.recipeIngredient||[]).map(x=>x.toString());
@@ -1239,7 +1292,10 @@ async function importCocktailByLink(){
 
   try{
     const page = await fetchTextViaJina(url);
-    const recipe = extractJsonLd(page);
+    let recipe = extractJsonLd(page);
+    if(!recipe){
+      recipe = parseLiquorTextFallback(page);
+    }
     if(!recipe) throw new Error("No Recipe data found on that page.");
     const c = recipeToCocktail(recipe);
     c.source = url;
