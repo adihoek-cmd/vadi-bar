@@ -4,7 +4,7 @@
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0b0b0b">
 <link rel="icon" href="./icons/icon-192.png"><link rel="stylesheet" href="./styles.css">
 </head><body>
-<header><h1>The Vadi Bar</h1><div class="sub">Per-bottle inventory · Add items by type (kind) · Offline-first</div>
+<header><h1>The Vadi Bar <span style="color:#b7b7b7;font-size:12px">v4.1</span></h1><div class="sub">Per-bottle inventory · Add items by type (kind) · Offline-first</div>
 <div class="controls" id="controls">
 <input id="q" type="search" placeholder="Search cocktails..." autocomplete="off"/>
 <div class="chips" role="group" aria-label="Filters">
@@ -32,7 +32,7 @@
 <div class="small" id="add-msg" style="margin-top:6px"></div></div>
 <div style="margin-top:14px" class="card">
 <div class="title">Backup</div><div class="small">Export/import your device changes (inventory + added recipes).</div>
-<div class="btnrow"><button class="btn" id="btn-export">Export JSON</button><button class="btn" id="btn-import">Import JSON</button><input id="file-import" type="file" accept="application/json" style="display:none"></div>
+<div class="btnrow"><button class="btn" id="btn-export">Export JSON</button><button class="btn" id="btn-import">Import JSON</button><button class="btn danger" id="btn-reset-inv">Reset inventory on this device</button><input id="file-import" type="file" accept="application/json" style="display:none"></div>
 </div></div>
 <div id="view-choice" style="display:none">
 <div class="sectionTitle">Bartender’s Choice</div><div class="small">Pick a mood.</div>

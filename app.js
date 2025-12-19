@@ -449,4 +449,13 @@ $("file-import").addEventListener("change",(e)=>{ const file=e.target.files?.[0]
 $("r-save").addEventListener("click",()=>addRecipeFromForm());
 $("r-clear").addEventListener("click",()=>clearRecipeForm());
 
+
+$("btn-reset-inv").addEventListener("click",()=>{
+  if(!confirm("This will clear ONLY this device's inventory toggles/items (recipes stay). Continue?")) return;
+  localStorage.removeItem("vadi.user.inventory");
+  USER.inventory=null;
+  renderInventory(); renderCocktails();
+  alert("Inventory reset. You should now see per-bottle items from the base list.");
+});
+
 init();
