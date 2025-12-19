@@ -734,6 +734,74 @@
         "Strain into a rocks glass over a large ice cube.",
         "Garnish with an orange twist."
       ]
+    },
+    {
+      "id": "boulevardier",
+      "name": "Boulevardier",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/boulevardier/",
+      "ingredients": [
+        {
+          "item": "Bourbon or rye whiskey",
+          "amount_ml": 45,
+          "requires": "Whiskey"
+        },
+        {
+          "item": "Campari",
+          "amount_ml": 30,
+          "requires": "Campari"
+        },
+        {
+          "item": "Sweet vermouth",
+          "amount_ml": 30,
+          "requires": "Sweet vermouth"
+        }
+      ],
+      "garnish": "Orange peel",
+      "steps": [
+        "Add bourbon (or rye), Campari, and sweet vermouth to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large ice cube.",
+        "Express an orange peel over the drink and garnish."
+      ]
+    },
+    {
+      "id": "gold-rush",
+      "name": "Gold Rush",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "shake",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/gold-rush/",
+      "ingredients": [
+        {
+          "item": "Bourbon",
+          "amount_ml": 60,
+          "requires": "Whiskey"
+        },
+        {
+          "item": "Fresh lemon juice",
+          "amount_ml": 22.5,
+          "requires": "Fresh lemon"
+        },
+        {
+          "item": "Honey syrup (1:1)",
+          "amount_ml": 22.5,
+          "requires": "Honey syrup"
+        }
+      ],
+      "garnish": "Lemon twist (optional)",
+      "steps": [
+        "Add bourbon, lemon juice, and honey syrup to a shaker with ice.",
+        "Shake until well-chilled.",
+        "Strain into a rocks glass over fresh ice.",
+        "Garnish with a lemon twist (optional)."
+      ]
     }
   ]
 }
