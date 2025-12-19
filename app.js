@@ -158,23 +158,33 @@ function renderInventory(){
     });
   });
 
-  // Group by kind within selected category
+  // Grouping rules (by kind), with special: all rum kinds -> "Rum"
+  const norm = s => (s||"").toLowerCase();
+  const groupOf = (kind)=>{
+    if(norm(kind).includes("rum")) return "Rum";
+    return kind;
+  };
+
   const catItems = items.filter(it=>it.category===INV_CAT);
-  const byKind = new Map();
+  const byGroup = new Map();
   for(const it of catItems){
-    if(!byKind.has(it.kind)) byKind.set(it.kind, []);
-    byKind.get(it.kind).push(it);
+    const g = groupOf(it.kind);
+    if(!byGroup.has(g)) byGroup.set(g, []);
+    byGroup.get(g).push(it);
   }
-  const kinds = Array.from(byKind.keys()).sort((a,b)=>a.localeCompare(b));
+  const groups = Array.from(byGroup.keys()).sort((a,b)=>a.localeCompare(b));
 
   // Restore open/closed state
   const openKey = `vadi.inv.open.${INV_CAT}`;
-  const openKinds = new Set(JSON.parse(localStorage.getItem(openKey) || "[]"));
+  const openGroups = new Set(JSON.parse(localStorage.getItem(openKey) || "[]"));
 
-  const accordions = kinds.map(kind=>{
-    const list = (byKind.get(kind)||[]).slice().sort((a,b)=>a.label.localeCompare(b.label));
+  // For Rum group: list of existing rum kinds to pick from
+  const rumKinds = [...new Set(catItems.filter(it=>groupOf(it.kind)==="Rum").map(it=>it.kind))].sort((a,b)=>a.localeCompare(b));
+
+  const accordions = groups.map(group=>{
+    const list = (byGroup.get(group)||[]).slice().sort((a,b)=>a.kind.localeCompare(b.kind) || a.label.localeCompare(b.label));
     const haveCount = list.filter(x=>x.have).length;
-    const isOpen = openKinds.has(kind);
+    const isOpen = openGroups.has(group);
 
     const rows = list.map(it=>`
       <div class="card" style="margin-top:10px">
@@ -190,25 +200,36 @@ function renderInventory(){
       </div>
     `).join("");
 
+    const isRum = (group==="Rum");
+
+    const kindPicker = isRum ? `
+      <select class="miniSelect inv-add-kind" data-group="${group}">
+        ${rumKinds.map(k=>`<option value="${k}">${k}</option>`).join("")}
+        <option value="__custom__">Other…</option>
+      </select>
+      <input type="text" class="miniInput inv-add-kind-custom" data-group="${group}" placeholder="Type (kind) e.g. White rum" style="display:none;min-width:180px">
+    ` : `<input type="hidden" class="inv-add-kind" data-group="${group}" value="${group}">`;
+
     return `
-      <details class="acc" data-kind="${kind}" ${isOpen?"open":""}>
+      <details class="acc" data-group="${group}" ${isOpen?"open":""}>
         <summary>
           <div>
-            <div class="title">${kind.toUpperCase()}</div>
+            <div class="title">${(group||"").toUpperCase()}</div>
             <div class="accCount">${haveCount}/${list.length} available</div>
           </div>
-          <div class="badge">${kind}</div>
+          <div class="badge">${group}</div>
         </summary>
         <div class="accBody">
           ${rows || `<div class="small">No bottles yet.</div>`}
           <div class="accAdd">
-            <div class="small"><b>Add a new bottle</b> (this kind)</div>
+            <div class="small"><b>Add a new bottle</b> (${group})</div>
             <div class="inlineRow" style="margin-top:8px">
-              <input type="text" class="inv-add-label" data-kind="${kind}" placeholder="Bottle name (brand / label)" style="flex:1;min-width:220px">
-              <button class="btn primary inv-add-btn" data-kind="${kind}">Add</button>
-              <button class="btn inv-scan-btn" data-kind="${kind}">Scan</button>
+              ${kindPicker}
+              <input type="text" class="inv-add-label" data-group="${group}" placeholder="Bottle name (brand / label)" style="flex:1;min-width:220px">
+              <button class="btn primary inv-add-btn" data-group="${group}">Add</button>
+              <button class="btn inv-scan-btn" data-group="${group}">Scan</button>
             </div>
-            <div class="small inv-add-msg" data-kind="${kind}" style="margin-top:6px"></div>
+            <div class="small inv-add-msg" data-group="${group}" style="margin-top:6px"></div>
           </div>
         </div>
       </details>
@@ -220,10 +241,20 @@ function renderInventory(){
   // Save open/closed state
   document.querySelectorAll("details.acc").forEach(det=>{
     det.addEventListener("toggle",()=>{
-      const k = det.getAttribute("data-kind");
+      const g = det.getAttribute("data-group");
       const set = new Set(JSON.parse(localStorage.getItem(openKey) || "[]"));
-      det.open ? set.add(k) : set.delete(k);
+      det.open ? set.add(g) : set.delete(g);
       localStorage.setItem(openKey, JSON.stringify([...set]));
+    });
+  });
+
+  // Rum kind picker custom toggle
+  document.querySelectorAll(".inv-add-kind[data-group='Rum']").forEach(sel=>{
+    sel.addEventListener("change",()=>{
+      const custom = document.querySelector(".inv-add-kind-custom[data-group='Rum']");
+      if(!custom) return;
+      custom.style.display = (sel.value==="__custom__") ? "inline-block" : "none";
+      if(sel.value!=="__custom__") custom.value="";
     });
   });
 
@@ -232,19 +263,31 @@ function renderInventory(){
     cb.addEventListener("change",()=>{
       setItemHave(cb.getAttribute("data-cat"), cb.getAttribute("data-kind"), cb.getAttribute("data-label"), cb.checked);
       renderCocktails();
-      // refresh counts
-      renderInventory();
+      renderInventory(); // refresh counts
     });
   });
 
-  // Per-kind add handlers
+  // Per-group add handlers
   document.querySelectorAll(".inv-add-btn").forEach(btn=>{
     btn.addEventListener("click",()=>{
-      const kind = btn.getAttribute("data-kind");
-      const input = document.querySelector(`.inv-add-label[data-kind="${CSS.escape(kind)}"]`);
-      const msg = document.querySelector(`.inv-add-msg[data-kind="${CSS.escape(kind)}"]`);
+      const group = btn.getAttribute("data-group");
+      const input = document.querySelector(`.inv-add-label[data-group="${CSS.escape(group)}"]`);
+      const msg = document.querySelector(`.inv-add-msg[data-group="${CSS.escape(group)}"]`);
       const label = (input?.value||"").trim();
       if(!label){ msg.textContent="Enter a bottle name."; return; }
+
+      // Determine kind
+      let kind = group;
+      if(group==="Rum"){
+        const sel = document.querySelector(`.inv-add-kind[data-group="Rum"]`);
+        const custom = document.querySelector(`.inv-add-kind-custom[data-group="Rum"]`);
+        if(sel && sel.value==="__custom__"){
+          kind = (custom?.value||"").trim() || "Rum";
+        }else if(sel){
+          kind = sel.value;
+        }
+      }
+
       ensureUserInv();
       USER.inventory.items.push({category:INV_CAT, kind, label, have:true});
       saveUser();
@@ -254,12 +297,12 @@ function renderInventory(){
     });
   });
 
-  // Per-kind scan handlers
+  // Per-group scan handlers
   document.querySelectorAll(".inv-scan-btn").forEach(btn=>{
     btn.addEventListener("click",async()=>{
-      const kind = btn.getAttribute("data-kind");
-      const input = document.querySelector(`.inv-add-label[data-kind="${CSS.escape(kind)}"]`);
-      const msg = document.querySelector(`.inv-add-msg[data-kind="${CSS.escape(kind)}"]`);
+      const group = btn.getAttribute("data-group");
+      const input = document.querySelector(`.inv-add-label[data-group="${CSS.escape(group)}"]`);
+      const msg = document.querySelector(`.inv-add-msg[data-group="${CSS.escape(group)}"]`);
       await scanBarcodeToInput(input, msg);
     });
   });
@@ -267,6 +310,9 @@ function renderInventory(){
   // Keep the global "Add new item" form category synced (still exists below)
   const catSel = $("add-cat");
   if(catSel && catSel.value !== INV_CAT) catSel.value = INV_CAT;
+
+  // Hide legacy flat list container if present
+  if($("invlist")) $("invlist").innerHTML = "";
 }
 
 const MOODS={

@@ -57,3 +57,6 @@ details.acc>summary::-webkit-details-marker{display:none}
 .accAdd{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
 .inlineRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .inlineRow .btn{padding:9px 10px}
+
+.miniSelect,.miniInput{background:#0f0f0f;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:9px 10px}
+.miniSelect{min-width:160px}
