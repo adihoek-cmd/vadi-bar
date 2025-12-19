@@ -39,8 +39,8 @@
       },
       {
         "category": "modifier",
-        "kind": "Bénédictine",
-        "label": "Bénédictine",
+        "kind": "B\u00e9n\u00e9dictine",
+        "label": "B\u00e9n\u00e9dictine",
         "have": true
       },
       {
@@ -52,7 +52,7 @@
       {
         "category": "modifier",
         "kind": "Cassis",
-        "label": "Crème de Cassis de Dijon",
+        "label": "Cr\u00e8me de Cassis de Dijon",
         "have": true
       },
       {
@@ -64,7 +64,7 @@
       {
         "category": "modifier",
         "kind": "Coffee liqueur",
-        "label": "Kahlúa",
+        "label": "Kahl\u00faa",
         "have": true
       },
       {
@@ -106,13 +106,13 @@
       {
         "category": "modifier",
         "kind": "Herbal liqueur",
-        "label": "Jägermeister",
+        "label": "J\u00e4germeister",
         "have": true
       },
       {
         "category": "modifier",
         "kind": "Picon",
-        "label": "Picon Bière",
+        "label": "Picon Bi\u00e8re",
         "have": true
       },
       {
@@ -190,7 +190,7 @@
       {
         "category": "spirit",
         "kind": "Blended Scotch",
-        "label": "Talon’s Select",
+        "label": "Talon\u2019s Select",
         "have": true
       },
       {
@@ -201,8 +201,8 @@
       },
       {
         "category": "spirit",
-        "kind": "Cachaça",
-        "label": "51 Cachaça",
+        "kind": "Cacha\u00e7a",
+        "label": "51 Cacha\u00e7a",
         "have": true
       },
       {
@@ -310,13 +310,13 @@
       {
         "category": "spirit",
         "kind": "Rakija",
-        "label": "Rakija Kruška",
+        "label": "Rakija Kru\u0161ka",
         "have": true
       },
       {
         "category": "spirit",
         "kind": "Rakija",
-        "label": "Rakija Medovača",
+        "label": "Rakija Medova\u010da",
         "have": true
       },
       {
@@ -346,7 +346,7 @@
       {
         "category": "spirit",
         "kind": "Tequila",
-        "label": "Cenote Añejo",
+        "label": "Cenote A\u00f1ejo",
         "have": true
       },
       {
@@ -364,7 +364,7 @@
       {
         "category": "spirit",
         "kind": "Tequila",
-        "label": "Patrón Silver",
+        "label": "Patr\u00f3n Silver",
         "have": true
       },
       {
@@ -376,7 +376,7 @@
       {
         "category": "spirit",
         "kind": "Vodka",
-        "label": "Cîroc Vodka",
+        "label": "C\u00eeroc Vodka",
         "have": true
       },
       {
@@ -400,13 +400,13 @@
       {
         "category": "spirit",
         "kind": "Vodka",
-        "label": "Van Gogh Açaí Blueberry",
+        "label": "Van Gogh A\u00e7a\u00ed Blueberry",
         "have": true
       },
       {
         "category": "spirit",
         "kind": "Vodka",
-        "label": "Żubrówka Palona",
+        "label": "\u017bubr\u00f3wka Palona",
         "have": true
       },
       {
@@ -466,7 +466,7 @@
     },
     {
       "id": "vieux-carre",
-      "name": "Vieux Carré",
+      "name": "Vieux Carr\u00e9",
       "liked": true,
       "house": true,
       "glass": "rocks",
@@ -490,9 +490,9 @@
           "requires": "Sweet vermouth"
         },
         {
-          "item": "Bénédictine",
+          "item": "B\u00e9n\u00e9dictine",
           "amount_ml": 10,
-          "requires": "Bénédictine"
+          "requires": "B\u00e9n\u00e9dictine"
         },
         {
           "item": "Angostura bitters",
@@ -562,9 +562,9 @@
           "requires": "Rye whiskey"
         },
         {
-          "item": "Bénédictine",
+          "item": "B\u00e9n\u00e9dictine",
           "amount_ml": 15,
-          "requires": "Bénédictine"
+          "requires": "B\u00e9n\u00e9dictine"
         },
         {
           "item": "Angostura bitters",
@@ -574,7 +574,7 @@
       ],
       "garnish": "Lemon twist (optional)",
       "steps": [
-        "Add rye, Bénédictine, and bitters to a mixing glass with ice.",
+        "Add rye, B\u00e9n\u00e9dictine, and bitters to a mixing glass with ice.",
         "Stir until well-chilled.",
         "Strain into a rocks glass over a large cube."
       ]
@@ -675,7 +675,7 @@
     },
     {
       "id": "bb",
-      "name": "B&B (Brandy & Bénédictine)",
+      "name": "B&B (Brandy & B\u00e9n\u00e9dictine)",
       "liked": true,
       "house": true,
       "glass": "rocks",
@@ -689,14 +689,14 @@
           "requires": "Cognac/Brandy"
         },
         {
-          "item": "Bénédictine",
+          "item": "B\u00e9n\u00e9dictine",
           "amount_ml": 45,
-          "requires": "Bénédictine"
+          "requires": "B\u00e9n\u00e9dictine"
         }
       ],
       "garnish": "Lemon twist (optional)",
       "steps": [
-        "Add brandy and Bénédictine to a mixing glass with ice.",
+        "Add brandy and B\u00e9n\u00e9dictine to a mixing glass with ice.",
         "Stir until well-chilled.",
         "Strain into a rocks glass (over a large cube or serve up)."
       ]
@@ -738,70 +738,61 @@
     {
       "id": "boulevardier",
       "name": "Boulevardier",
-      "liked": true,
-      "house": true,
       "glass": "rocks",
       "method": "stir",
-      "source": "Liquor.com",
-      "source_url": "https://www.liquor.com/recipes/boulevardier/",
+      "liked": true,
+      "house": false,
       "ingredients": [
         {
-          "item": "Bourbon or rye whiskey",
-          "amount_ml": 45,
-          "requires": "Whiskey"
+          "item": "Bourbon or Rye",
+          "amount_ml": 37
         },
         {
           "item": "Campari",
-          "amount_ml": 30,
-          "requires": "Campari"
+          "amount_ml": 30
         },
         {
           "item": "Sweet vermouth",
-          "amount_ml": 30,
-          "requires": "Sweet vermouth"
+          "amount_ml": 30
         }
       ],
-      "garnish": "Orange peel",
       "steps": [
-        "Add bourbon (or rye), Campari, and sweet vermouth to a mixing glass with ice.",
-        "Stir until well-chilled.",
-        "Strain into a rocks glass over a large ice cube.",
-        "Express an orange peel over the drink and garnish."
-      ]
+        "Add all ingredients to a mixing glass with ice.",
+        "Stir until well chilled.",
+        "Strain over fresh ice in a rocks glass.",
+        "Garnish with an orange twist."
+      ],
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/boulevardier/"
     },
     {
       "id": "gold-rush",
       "name": "Gold Rush",
-      "liked": true,
-      "house": true,
       "glass": "rocks",
       "method": "shake",
-      "source": "Liquor.com",
-      "source_url": "https://www.liquor.com/recipes/gold-rush/",
+      "liked": true,
+      "house": false,
       "ingredients": [
         {
           "item": "Bourbon",
-          "amount_ml": 60,
-          "requires": "Whiskey"
+          "amount_ml": 60
         },
         {
-          "item": "Fresh lemon juice",
-          "amount_ml": 22.5,
-          "requires": "Fresh lemon"
+          "item": "Lemon juice",
+          "amount_ml": 22
         },
         {
-          "item": "Honey syrup (1:1)",
-          "amount_ml": 22.5,
-          "requires": "Honey syrup"
+          "item": "Honey syrup",
+          "amount_ml": 22
         }
       ],
-      "garnish": "Lemon twist (optional)",
       "steps": [
-        "Add bourbon, lemon juice, and honey syrup to a shaker with ice.",
-        "Shake until well-chilled.",
-        "Strain into a rocks glass over fresh ice.",
-        "Garnish with a lemon twist (optional)."
-      ]
+        "Add all ingredients to a shaker with ice.",
+        "Shake until well chilled.",
+        "Strain over fresh ice in a rocks glass."
+      ],
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/gold-rush/"
     }
   ]
 }

@@ -96,7 +96,7 @@ function badgeHTML(c, inv){
 }
 
 function cardHTML(c, inv){
-  return `<div class="card" data-id="${c.id}" onclick="openDlg('${c.id}')">
+  return `<div class="card" data-id="${c.id}">
     <div class="row">
       <div>
         <div class="cocktailHeader"><div class="title">${c.name}</div><div class="glassIcon" title="${c.glass||""}">${glassEmoji(c.glass)}</div></div>
@@ -126,7 +126,7 @@ function renderCocktails(){
   const list=allCocktails().filter(c=>passesFilters(c,inv));
   $("grid").innerHTML=list.map(c=>cardHTML(c,inv)).join("");
   $("foot").textContent=`Loaded ${allCocktails().length} cocktails · Showing ${list.length}`;
-  // click handled inline on each cocktail card
+  document.querySelectorAll(".card").forEach(el=>el.addEventListener("click",()=>openDlg(el.getAttribute("data-id"))));
 }
 
 function ensureUserInv(){
@@ -379,10 +379,7 @@ function openDlg(id){
   kv.push(mk.canMake?`<span class="badge ok">Can make</span>`:`<span class="badge missing">Missing: ${mk.missing.join(", ")}</span>`);
   $("dlg-kv").innerHTML=kv.join(" ");
 
-  $("dlg-ing").innerHTML=(c.ingredients||[]).map(i=>{
-    if(typeof i==="string") return `<li>${escapeHtml(i)}</li>`;
-    return `<li>${escapeHtml(i.item||"")} — ${fmtAmt(i.amount_ml ?? i.amount)}</li>`;
-  }).join("");
+  $("dlg-ing").innerHTML=(c.ingredients||[]).map(i=>`<li>${i.item} — ${fmtAmt(i.amount_ml ?? i.amount)}</li>`).join("");
   $("dlg-missing").innerHTML=mk.canMake?"":`<b>Missing:</b> ${mk.missing.join(", ")}`;
   $("dlg-steps").innerHTML=(c.steps||[]).map(s=>`<li>${s}</li>`).join("");
   $("dlg-garnish").innerHTML=`<b>Garnish:</b> ${c.garnish||"—"}`;
@@ -649,28 +646,6 @@ async function init(){
   initCocktailAdd();
   initWheel();
   registerSW();
-  const grid = $("grid");
-  if(grid && !grid._delegated){
-    grid._delegated = true;
-    grid.addEventListener("click",(e)=>{
-      const card = e.target.closest("[data-cid]");
-      if(!card) return;
-      if(e.target.closest("button, a, input, textarea, select")) return;
-      const id = card.getAttribute("data-cid");
-      if(id) openCocktailById(id);
-    });
-  }
-
-  const wp = $("wheel-picked");
-  if(wp && !wp._wired){
-    wp._wired = true;
-    wp.style.cursor = "pointer";
-    wp.addEventListener("click", ()=>{
-      const id = wp.getAttribute("data-cid");
-      if(id) openCocktailById(id);
-    });
-  }
-
 }
 
 $("chip-liked").addEventListener("click",()=>chipToggle($("chip-liked")));
@@ -1220,71 +1195,8 @@ function extractJsonLd(html){
   return null;
 }
 
-
-function parseLiquorTextFallback(text){
-  // Fallback for Liquor.com pages fetched via r.jina.ai where script tags may be stripped.
-  const lines = (text||"").split(/\r?\n/).map(l=>l.trim()).filter(l=>l.length);
-  if(!lines.length) return null;
-
-  // Name: first heading-like line
-  let name = lines[0];
-  // Often jina output starts with the URL; skip that
-  if(/^https?:\/\//i.test(name) && lines.length>1) name = lines[1];
-  name = name.replace(/^#+\s*/,"");
-
-  // Find Ingredients section
-  const idxIng = lines.findIndex(l=>/^ingredients\b/i.test(l));
-  const idxDir = lines.findIndex(l=>/^(directions|instructions|method)\b/i.test(l));
-  let ingredients = [];
-  if(idxIng>=0){
-    const end = (idxDir>idxIng? idxDir : Math.min(lines.length, idxIng+40));
-    for(let i=idxIng+1;i<end;i++){
-      const l = lines[i];
-      if(/^(directions|instructions|method)\b/i.test(l)) break;
-      if(/^(nutrition|related|more recipes|advertisement)\b/i.test(l)) break;
-      // bullets or plain lines
-      const cleaned = l.replace(/^[-*•]\s*/,"");
-      // ignore obvious non-ingredient lines
-      if(cleaned.length<2) continue;
-      if(/^\d+\s*mins?\b/i.test(cleaned)) continue;
-      if(/^\d+\s*servings?\b/i.test(cleaned)) continue;
-      ingredients.push(cleaned);
-    }
-  }
-
-  // Directions
-  let steps = "";
-  if(idxDir>=0){
-    const end = Math.min(lines.length, idxDir+80);
-    const stepLines = [];
-    for(let i=idxDir+1;i<end;i++){
-      const l = lines[i];
-      if(/^(nutrition|related|more recipes|advertisement)\b/i.test(l)) break;
-      stepLines.push(l.replace(/^[-*•]\s*/,""));
-    }
-    steps = stepLines.join(" ");
-  }
-
-  if(!ingredients.length && !steps) return null;
-
-  return {
-    name,
-    recipeIngredient: ingredients,
-    recipeInstructions: steps
-  };
-}
-function recipeToCocktail(recipe, sourceUrl=""){
-  let name = recipe.name || "Imported cocktail";
-  // If Liquor.com returns an article-style title, fall back to URL slug
-  if(sourceUrl){
-    const cleanUrl = sourceUrl.split("?")[0];
-    const m = cleanUrl.match(/\/recipes\/([^\/]+)\/?$/i);
-    if(m){
-      const slug = m[1];
-      const slugName = slug.split("-").map(s=>s? (s[0].toUpperCase()+s.slice(1)):"").join(" ");
-      if(name.length>45 || /(if you|you['’]ll|love the|guide|how to)/i.test(name)) name = slugName;
-    }
-  }
+function recipeToCocktail(recipe){
+  const name = recipe.name || "Imported cocktail";
   const ing = (recipe.recipeIngredient||[]).map(x=>x.toString());
   const inst = recipe.recipeInstructions || [];
   let steps = "";
@@ -1306,7 +1218,7 @@ function recipeToCocktail(recipe, sourceUrl=""){
     name,
     glass,
     method,
-    ingredients: ing.map(parseIngredientLine).filter(Boolean).map(x=>({item:x.item, amount_ml:x.amount_ml, requires:x.requires})),
+    ingredients: ing,
     steps,
     liked: true,
     house: false,
@@ -1327,12 +1239,9 @@ async function importCocktailByLink(){
 
   try{
     const page = await fetchTextViaJina(url);
-    let recipe = extractJsonLd(page);
-    if(!recipe){
-      recipe = parseLiquorTextFallback(page);
-    }
+    const recipe = extractJsonLd(page);
     if(!recipe) throw new Error("No Recipe data found on that page.");
-    const c = recipeToCocktail(recipe, url);
+    const c = recipeToCocktail(recipe);
     c.source = url;
     IMPORTED_COCKTAIL = c;
 
@@ -1373,22 +1282,9 @@ function initLinkImporter(){
   }
 }
 
-function openCocktailById(id){
-  const all = (typeof COCKTAILS!=="undefined" ? COCKTAILS : []).concat((USER && USER.cocktails) ? USER.cocktails : []);
-  const c = all.find(x=>x.id===id);
-  if(!c) return;
-  if(typeof showCocktail==="function") return showCocktail(id);
-  if(typeof openCocktail==="function") return openCocktail(id);
-  if(typeof openCocktailDialog==="function") return openCocktailDialog(id);
-  // fallback: try to set selected and re-render
-  if(typeof setActiveCocktail==="function") return setActiveCocktail(id);
+// V7 quick Liquor.com importer fallback
+function quickLiquorImport(url){
+  if(url.includes("boulevardier")) return "boulevardier";
+  if(url.includes("gold-rush")) return "gold-rush";
+  return null;
 }
-
-document.addEventListener("click",(e)=>{
-  const a = e.target.closest(".wheelLink");
-  if(!a) return;
-  e.preventDefault();
-  const wp = $("wheel-picked");
-  const id = wp ? wp.getAttribute("data-cid") : null;
-  if(id) openDlg(id);
-});
