@@ -1,6 +1,9 @@
 let BASE=null;
 let USER={inventory:null,cocktails:[]};
 let CURRENT=null;
+let INV_CAT='spirit';
+let INV_KIND='__all__';
+
 const $=id=>document.getElementById(id);
 const normalize=s=>(s||"").toLowerCase();
 
@@ -139,36 +142,76 @@ function setItemHave(category, kind, label, have){
 
 function renderInventory(){
   const inv=mergedInventory();
-  const items = (inv.items||[]).slice();
+  const items=(inv.items||[]).slice();
 
-  const catOrder = {spirit:0, modifier:1, syrup:2, pantry:3};
-  items.sort((a,b)=> (catOrder[a.category]??99)-(catOrder[b.category]??99) || a.label.localeCompare(b.label));
+  // Build category tabs
+  const cats=[
+    {k:"spirit", label:"Spirits"},
+    {k:"modifier", label:"Modifiers"},
+    {k:"syrup", label:"Syrups"},
+    {k:"pantry", label:"Pantry"},
+  ];
+  $("inv-cattabs").innerHTML = cats.map(c=>`<div class="chip" data-cat="${c.k}" aria-pressed="${INV_CAT===c.k}">${c.label}</div>`).join("");
 
-  const prettyCat = (c)=>({spirit:"Spirit", modifier:"Modifier", syrup:"Syrup", pantry:"Pantry"}[c]||c);
+  document.querySelectorAll("#inv-cattabs .chip").forEach(ch=>{
+    ch.addEventListener("click",()=>{
+      INV_CAT = ch.getAttribute("data-cat");
+      INV_KIND = "__all__";
+      renderInventory();
+    });
+  });
 
-  $("invlist").innerHTML = items.map(it=>`
-    <div class="card">
-      <div class="itemrow">
-        <div>
-          <div><b>${it.label}</b></div>
-          <div class="badges" style="margin-top:6px">
-            <span class="badge kind">${prettyCat(it.category)}</span>
-            <span class="badge">${it.kind}</span>
+  // Kinds for selected category
+  const kinds = [...new Set(items.filter(it=>it.category===INV_CAT).map(it=>it.kind))].sort((a,b)=>a.localeCompare(b));
+  $("inv-kindtabs").innerHTML = [`<div class="chip" data-kind="__all__" aria-pressed="${INV_KIND==='__all__'}">All</div>`]
+    .concat(kinds.map(k=>`<div class="chip" data-kind="${k}" aria-pressed="${INV_KIND===k}">${k}</div>`))
+    .join("");
+
+  document.querySelectorAll("#inv-kindtabs .chip").forEach(ch=>{
+    ch.addEventListener("click",()=>{
+      INV_KIND = ch.getAttribute("data-kind");
+      renderInventory();
+    });
+  });
+
+  const filtered = items
+    .filter(it=>it.category===INV_CAT)
+    .filter(it=>INV_KIND==="__all__" ? true : it.kind===INV_KIND)
+    .sort((a,b)=>a.kind.localeCompare(b.kind) || a.label.localeCompare(b.label));
+
+  // Render as "tree": Kind header then bottles under it
+  let out = "";
+  let currentKind = null;
+  for(const it of filtered){
+    if(INV_KIND==="__all__" && it.kind !== currentKind){
+      currentKind = it.kind;
+      out += `<div class="card"><div class="title">${currentKind}</div><div class="small">Toggle bottles in this group</div></div>`;
+    }
+    out += `
+      <div class="card">
+        <div class="itemrow">
+          <div>
+            <div><b>${it.label}</b></div>
+            <div class="small">${it.kind}</div>
+          </div>
+          <div class="switch">
+            <input type="checkbox" ${it.have?"checked":""} data-cat="${it.category}" data-kind="${it.kind}" data-label="${it.label}">
           </div>
         </div>
-        <div class="switch">
-          <input type="checkbox" ${it.have?"checked":""} data-cat="${it.category}" data-kind="${it.kind}" data-label="${it.label}">
-        </div>
-      </div>
-    </div>
-  `).join("");
+      </div>`;
+  }
+  $("invlist").innerHTML = out || `<div class="card"><div class="title">No items</div><div class="small">Add items below.</div></div>`;
 
-  document.querySelectorAll('input[type="checkbox"][data-cat]').forEach(cb=>{
+  document.querySelectorAll('#invlist input[type="checkbox"][data-cat]').forEach(cb=>{
     cb.addEventListener("change",()=>{
       setItemHave(cb.getAttribute("data-cat"), cb.getAttribute("data-kind"), cb.getAttribute("data-label"), cb.checked);
       renderCocktails();
     });
   });
+
+  // Keep "Add new item" category synced with current tab for convenience
+  const catSel = $("add-cat");
+  if(catSel && catSel.value !== INV_CAT) catSel.value = INV_CAT;
 }
 
 const MOODS={
