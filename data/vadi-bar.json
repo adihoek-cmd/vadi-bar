@@ -2,15 +2,243 @@
   "inventory": {
     "items": [
       {
-        "category": "spirit",
-        "kind": "Gin",
-        "label": "Tanqueray No. Ten",
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Askalon Arack (Extra Fine)",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Pernod Paris",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Pilavas Ouzo",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Sans Rival Ouzo",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Zoara Arak",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Aperol",
+        "label": "Aperol",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Bénédictine",
+        "label": "Bénédictine",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Campari",
+        "label": "Campari",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cassis",
+        "label": "Crème de Cassis de Dijon",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cherry liqueur",
+        "label": "Cherry Heering",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Coffee liqueur",
+        "label": "Kahlúa",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cointreau",
+        "label": "Cointreau",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cream liqueur",
+        "label": "Baileys",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Drambuie",
+        "label": "Drambuie",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Fernet",
+        "label": "Fernet-Branca",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Grand Marnier",
+        "label": "Grand Marnier",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Green Chartreuse",
+        "label": "Green Chartreuse",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Herbal liqueur",
+        "label": "Jägermeister",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Picon",
+        "label": "Picon Bière",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Carpano Antica Formula",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Julius Vermut",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Martini Bianco",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Martini Rosso",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Angostura bitters",
+        "label": "Angostura bitters",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Fresh lemon",
+        "label": "Fresh lemon",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Fresh lime",
+        "label": "Fresh lime",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Ice",
+        "label": "Ice",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Maple syrup",
+        "label": "Maple syrup",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Orange (peel/twist)",
+        "label": "Orange (peel/twist)",
         "have": true
       },
       {
         "category": "spirit",
-        "kind": "Gin",
-        "label": "Tanqueray Rangpur",
+        "kind": "Aged rum",
+        "label": "Jung & Wulff Barbados Rum No.3",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Blended Scotch",
+        "label": "Compass Box Spice Tree",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Blended Scotch",
+        "label": "Talon’s Select",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Bourbon",
+        "label": "Woodford Reserve Bourbon",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Cachaça",
+        "label": "51 Cachaça",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Cognac/Brandy",
+        "label": "Courvoisier VS",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Cognac/Brandy",
+        "label": "Torres 10",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Calypso Red Rum",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "El Supremo 8",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Kraken (spiced)",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Smith & Cross",
         "have": true
       },
       {
@@ -28,6 +256,18 @@
       {
         "category": "spirit",
         "kind": "Gin",
+        "label": "Tanqueray No. Ten",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Tanqueray Rangpur",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Gin",
         "label": "Votanikon",
         "have": true
       },
@@ -39,32 +279,14 @@
       },
       {
         "category": "spirit",
-        "kind": "Rye whiskey",
-        "label": "Woodford Reserve Rye",
-        "have": true
-      },
-      {
-        "category": "spirit",
-        "kind": "Bourbon",
-        "label": "Woodford Reserve Bourbon",
-        "have": true
-      },
-      {
-        "category": "spirit",
-        "kind": "Blended Scotch",
-        "label": "Compass Box Spice Tree",
-        "have": true
-      },
-      {
-        "category": "spirit",
-        "kind": "Blended Scotch",
-        "label": "Talon’s Select",
+        "kind": "Mezcal",
+        "label": "Se Busca Mezcal Joven",
         "have": true
       },
       {
         "category": "spirit",
         "kind": "Peated Scotch",
-        "label": "Laphroaig 10",
+        "label": "Benriach The Smoky Twelve 12",
         "have": true
       },
       {
@@ -76,31 +298,49 @@
       {
         "category": "spirit",
         "kind": "Peated Scotch",
+        "label": "Laphroaig 10",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Peated Scotch",
         "label": "Talisker 10",
         "have": true
       },
       {
         "category": "spirit",
-        "kind": "Cognac/Brandy",
-        "label": "Courvoisier VS",
+        "kind": "Rakija",
+        "label": "Rakija Kruška",
         "have": true
       },
       {
         "category": "spirit",
-        "kind": "Cognac/Brandy",
-        "label": "Torres 10",
+        "kind": "Rakija",
+        "label": "Rakija Medovača",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Rye whiskey",
+        "label": "Woodford Reserve Rye",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Spiced rum",
+        "label": "Takamaka Zepis Kreol",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Spiced rum",
+        "label": "The Kraken Black Spiced Rum",
         "have": true
       },
       {
         "category": "spirit",
         "kind": "Tequila",
-        "label": "Don Julio 1942",
-        "have": true
-      },
-      {
-        "category": "spirit",
-        "kind": "Tequila",
-        "label": "Patrón Silver",
+        "label": "Cenote Ahumado",
         "have": true
       },
       {
@@ -112,73 +352,61 @@
       {
         "category": "spirit",
         "kind": "Tequila",
+        "label": "Don Julio 1942",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
         "label": "Jose Cuervo Especial",
         "have": true
       },
       {
         "category": "spirit",
-        "kind": "Dark rum",
-        "label": "Kraken (spiced)",
+        "kind": "Tequila",
+        "label": "Patrón Silver",
         "have": true
       },
       {
         "category": "spirit",
-        "kind": "Dark rum",
-        "label": "El Supremo 8",
+        "kind": "Vodka",
+        "label": "Berlin Vodka",
         "have": true
       },
       {
         "category": "spirit",
-        "kind": "Dark rum",
-        "label": "Calypso Red Rum",
+        "kind": "Vodka",
+        "label": "Cîroc Vodka",
         "have": true
       },
       {
         "category": "spirit",
-        "kind": "Dark rum",
-        "label": "Smith & Cross",
+        "kind": "Vodka",
+        "label": "Ketel One Vodka",
         "have": true
       },
       {
-        "category": "modifier",
-        "kind": "Campari",
-        "label": "Campari",
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Stoli Vanil",
         "have": true
       },
       {
-        "category": "modifier",
-        "kind": "Sweet vermouth",
-        "label": "Martini Rosso",
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Stolichnaya Vodka",
         "have": true
       },
       {
-        "category": "modifier",
-        "kind": "Sweet vermouth",
-        "label": "Julius Vermut",
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Van Gogh Açaí Blueberry",
         "have": true
       },
       {
-        "category": "modifier",
-        "kind": "Bénédictine",
-        "label": "Bénédictine",
-        "have": true
-      },
-      {
-        "category": "modifier",
-        "kind": "Drambuie",
-        "label": "Drambuie",
-        "have": true
-      },
-      {
-        "category": "modifier",
-        "kind": "Cointreau",
-        "label": "Cointreau",
-        "have": true
-      },
-      {
-        "category": "syrup",
-        "kind": "Simple syrup (2:1)",
-        "label": "Homemade double simple",
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Żubrówka Palona",
         "have": true
       },
       {
@@ -194,39 +422,9 @@
         "have": true
       },
       {
-        "category": "pantry",
-        "kind": "Fresh lemon",
-        "label": "Fresh lemon",
-        "have": true
-      },
-      {
-        "category": "pantry",
-        "kind": "Fresh lime",
-        "label": "Fresh lime",
-        "have": true
-      },
-      {
-        "category": "pantry",
-        "kind": "Angostura bitters",
-        "label": "Angostura bitters",
-        "have": true
-      },
-      {
-        "category": "pantry",
-        "kind": "Maple syrup",
-        "label": "Maple syrup",
-        "have": true
-      },
-      {
-        "category": "pantry",
-        "kind": "Ice",
-        "label": "Ice",
-        "have": true
-      },
-      {
-        "category": "pantry",
-        "kind": "Orange (peel/twist)",
-        "label": "Orange (peel/twist)",
+        "category": "syrup",
+        "kind": "Simple syrup (2:1)",
+        "label": "Homemade double simple",
         "have": true
       }
     ]
