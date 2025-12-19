@@ -96,7 +96,7 @@ function badgeHTML(c, inv){
 }
 
 function cardHTML(c, inv){
-  return `<div class="card" data-id="${c.id}">
+  return `<div class="card" data-id="${c.id}" onclick="openDlg(\'${c.id}\')">
     <div class="row">
       <div>
         <div class="cocktailHeader"><div class="title">${c.name}</div><div class="glassIcon" title="${c.glass||""}">${glassEmoji(c.glass)}</div></div>
@@ -126,7 +126,7 @@ function renderCocktails(){
   const list=allCocktails().filter(c=>passesFilters(c,inv));
   $("grid").innerHTML=list.map(c=>cardHTML(c,inv)).join("");
   $("foot").textContent=`Loaded ${allCocktails().length} cocktails · Showing ${list.length}`;
-  document.querySelectorAll(".card").forEach(el=>el.addEventListener("click",()=>openDlg(el.getAttribute("data-id"))));
+  // click handled inline on each cocktail card
 }
 
 function ensureUserInv(){
@@ -1383,3 +1383,12 @@ function openCocktailById(id){
   // fallback: try to set selected and re-render
   if(typeof setActiveCocktail==="function") return setActiveCocktail(id);
 }
+
+document.addEventListener("click",(e)=>{
+  const a = e.target.closest(".wheelLink");
+  if(!a) return;
+  e.preventDefault();
+  const wp = $("wheel-picked");
+  const id = wp ? wp.getAttribute("data-cid") : null;
+  if(id) openDlg(id);
+});
