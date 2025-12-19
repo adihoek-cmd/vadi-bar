@@ -80,6 +80,7 @@ function chipToggle(chip){
   const pressed = chip.getAttribute("aria-pressed")==="true";
   chip.setAttribute("aria-pressed", pressed ? "false":"true");
   renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
 }
@@ -288,6 +289,7 @@ function renderInventory(){
     cb.addEventListener("change",()=>{
       setItemHave(cb.getAttribute("data-cat"), cb.getAttribute("data-kind"), cb.getAttribute("data-label"), cb.checked);
       renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
       renderInventory(); // refresh counts
@@ -321,6 +323,7 @@ function renderInventory(){
       input.value="";
       msg.textContent=`Added: ${label}`;
       renderInventory(); renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
     });
@@ -432,18 +435,21 @@ function deleteCurrentIfUser(){
   saveUser();
   $("dlg").close();
   renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
 }
 
 function setView(which){
-  const views={cocktails:$("view-cocktails"),inventory:$("view-inventory"),choice:$("view-choice"),add:$("view-add")};
+  const views={cocktails:$("view-cocktails"),inventory:$("view-inventory"),wheel:$("view-wheel"),choice:$("view-choice")};
   Object.values(views).forEach(v=>v.style.display="none");
+  if(!views[which]) which="cocktails";
   views[which].style.display="block";
   $("controls").style.display=(which==="cocktails")?"flex":"none";
   document.querySelectorAll(".navbtn").forEach(b=>b.classList.remove("active"));
   $(`nav-${which}`).classList.add("active");
-  if(which==="cocktails") renderCocktails();
+  if(which==="cocktails") { renderCocktails();
+  initLinkImporter(); initLinkImporter(); }
   initCocktailAdd();
   initWheel();
   if(which==="inventory") renderInventory();
@@ -493,6 +499,7 @@ function addRecipeFromForm(){
   saveUser();
   $("r-msg").textContent=`Saved: ${name}`;
   renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
 }
@@ -515,6 +522,7 @@ function addInventoryItem(){
   $("add-kind").value=""; $("add-label").value="";
   msg.textContent=`Added: ${label}`;
   renderInventory(); renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
 }
@@ -605,6 +613,7 @@ function importJSON(file){
       migrateInventoryIfNeeded();
       saveUser();
       renderInventory(); renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
       alert("Imported successfully.");
@@ -633,6 +642,7 @@ async function init(){
   loadUser();
   await loadBase();
   renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
   registerSW();
@@ -653,7 +663,7 @@ $("btn-del").addEventListener("click",()=>deleteCurrentIfUser());
 $("nav-cocktails").addEventListener("click",()=>setView("cocktails"));
 $("nav-inventory").addEventListener("click",()=>setView("inventory"));
 $("nav-choice").addEventListener("click",()=>setView("choice"));
-$("nav-add").addEventListener("click",()=>setView("add"));
+$("nav-wheel").addEventListener("click",()=>setView("wheel"));
 
 document.querySelectorAll("[data-mood]").forEach(btn=>btn.addEventListener("click",()=>renderChoice(btn.getAttribute("data-mood"))));
 
@@ -673,6 +683,7 @@ $("btn-reset-inv").addEventListener("click",()=>{
   localStorage.removeItem("vadi.user.inventory");
   USER.inventory=null;
   renderInventory(); renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
   alert("Inventory reset. You should now see per-bottle items from the base list.");
@@ -687,6 +698,7 @@ $("btn-restore-inv").addEventListener("click",()=>{
   USER.inventory = {items: BASE.inventory.items.map(it=>({category:it.category, kind:it.kind, label:it.label, have:true}))};
   saveUser();
   renderInventory(); renderCocktails();
+  initLinkImporter();
   initCocktailAdd();
   initWheel();
   alert("Restored default inventory.");
@@ -1031,6 +1043,7 @@ function upsertUserCocktail(c){
   else USER.cocktails.push(c);
   saveUser();
   renderCocktails();
+  initLinkImporter();
   renderChoice(); // keeps wheel/choice up to date
 }
 
@@ -1120,4 +1133,151 @@ function openSurpriseSearch(){
     url = "https://www.google.com/search?q=" + encodeURIComponent(q);
   }
   window.open(url, "_blank", "noopener");
+}
+
+// --- Add cocktail by link (Liquor.com preferred) ---
+let IMPORTED_COCKTAIL = null;
+
+function esc(s){ return (s??"").toString().replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
+
+function normalizeGlass(g){
+  const t=(g||"").toLowerCase();
+  if(t.includes("margarita")) return "margarita";
+  if(t.includes("coupe")) return "coupe";
+  if(t.includes("martini")) return "martini";
+  if(t.includes("collins")||t.includes("highball")) return "highball";
+  if(t.includes("rocks")||t.includes("old fashioned")) return "rocks";
+  if(t.includes("nick")||t.includes("nora")) return "coupe";
+  if(t.includes("mug")) return "mug";
+  return g || "rocks";
+}
+
+function methodGuess(stepsText){
+  const s=(stepsText||"").toLowerCase();
+  if(s.includes("shake")) return "shaken";
+  if(s.includes("stir")) return "stirred";
+  if(s.includes("build")) return "build";
+  return "stirred";
+}
+
+async function fetchTextViaJina(url){
+  // Jina AI proxy renders the target page as text (helps bypass CORS)
+  const clean = url.replace(/^http:\/\//i,"https://");
+  const prox = "https://r.jina.ai/" + clean;
+  const resp = await fetch(prox, {cache:"no-cache"});
+  if(!resp.ok) throw new Error("HTTP "+resp.status);
+  return await resp.text();
+}
+
+function extractJsonLd(html){
+  const reScript = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let m, blocks=[];
+  while((m=reScript.exec(html))){
+    const raw = m[1].trim();
+    if(raw) blocks.push(raw);
+  }
+  for(const b of blocks){
+    try{
+      const j = JSON.parse(b);
+      // could be array or @graph
+      const candidates = [];
+      if(Array.isArray(j)) candidates.push(...j);
+      else if(j && j["@graph"]) candidates.push(...j["@graph"]);
+      else candidates.push(j);
+      for(const c of candidates){
+        const t = (c["@type"]||c.type||"");
+        if((Array.isArray(t) ? t.includes("Recipe") : (t==="Recipe"))){
+          return c;
+        }
+      }
+    }catch(e){}
+  }
+  return null;
+}
+
+function recipeToCocktail(recipe){
+  const name = recipe.name || "Imported cocktail";
+  const ing = (recipe.recipeIngredient||[]).map(x=>x.toString());
+  const inst = recipe.recipeInstructions || [];
+  let steps = "";
+  if(Array.isArray(inst)){
+    steps = inst.map(s=> (typeof s==="string"?s:(s.text||""))).filter(Boolean).join(" ");
+  }else if(typeof inst==="string") steps = inst;
+  else steps = inst.text || "";
+
+  // Liquor.com often includes "recipeCategory" / "keywords" / "description"
+  let glass = normalizeGlass(recipe.suitableForDiet || recipe.recipeCategory || "");
+  // Better: infer from name for Margarita
+  if(name.toLowerCase().includes("margarita")) glass = "margarita";
+
+  const method = methodGuess(steps);
+
+  // Map needs (kinds) is hard from free-text. We'll keep as freeform ingredients for now, and set needs empty.
+  return {
+    id: "user-" + Math.random().toString(16).slice(2),
+    name,
+    glass,
+    method,
+    ingredients: ing,
+    steps,
+    liked: true,
+    house: false,
+    needs: []
+  };
+}
+
+async function importCocktailByLink(){
+  const url = $("c-import-url")?.value?.trim();
+  if(!url){
+    $("c-import-status").textContent = "Paste a link first.";
+    return;
+  }
+  $("c-import-status").textContent = "Importing…";
+  $("c-save-btn").disabled = true;
+  $("c-import-preview").style.display = "none";
+  IMPORTED_COCKTAIL = null;
+
+  try{
+    const page = await fetchTextViaJina(url);
+    const recipe = extractJsonLd(page);
+    if(!recipe) throw new Error("No Recipe data found on that page.");
+    const c = recipeToCocktail(recipe);
+    c.source = url;
+    IMPORTED_COCKTAIL = c;
+
+    $("c-import-status").innerHTML = `Imported: <b>${esc(c.name)}</b> • ${glassEmoji(c.glass)} ${esc(c.glass)} • ${esc(c.method)}`;
+    $("c-import-preview").style.display = "block";
+    $("c-import-preview").innerHTML =
+      `<div><b>Ingredients</b>: ${esc((c.ingredients||[]).slice(0,8).join(" • "))}${(c.ingredients||[]).length>8?" …":""}</div>`+
+      `<div style="margin-top:6px"><b>Steps</b>: ${esc((c.steps||"").slice(0,180))}${(c.steps||"").length>180?" …":""}</div>`;
+    $("c-save-btn").disabled = false;
+  }catch(e){
+    $("c-import-status").textContent = "Import failed: " + (e?.message||e);
+  }
+}
+
+function saveImportedCocktail(){
+  if(!IMPORTED_COCKTAIL) return;
+  USER.cocktails = USER.cocktails || [];
+  USER.cocktails.unshift(IMPORTED_COCKTAIL);
+  saveUser();
+  $("c-import-status").textContent = "Saved ✔";
+  $("c-save-btn").disabled = true;
+  $("c-import-preview").style.display = "none";
+  $("c-import-url").value = "";
+  renderCocktails();
+  initLinkImporter();
+}
+
+function initLinkImporter(){
+  const b = $("c-import-btn");
+  const s = $("c-save-btn");
+  if(b && !b._wired){
+    b._wired = true;
+    b.addEventListener("click", importCocktailByLink);
+  }
+  if(s && !s._wired){
+    s._wired = true;
+    s.addEventListener("click", saveImportedCocktail);
+  }
 }
