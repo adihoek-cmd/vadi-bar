@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Vadi Bar</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header>
+    <h1>The Vadi Bar</h1>
+    <div class="sub">Offline-first PWA · Favorites + House Menu · “Can I make it?” built in</div>
+    <div class="controls" id="controls">
+      <input id="q" type="search" placeholder="Search cocktails (e.g., negroni, rye, benedictine)..." autocomplete="off" />
+      <div class="chips" role="group" aria-label="Filters">
+        <div class="chip" id="chip-liked" aria-pressed="false">Liked</div>
+        <div class="chip" id="chip-house" aria-pressed="false">House Menu</div>
+        <div class="chip" id="chip-canmake" aria-pressed="false">Can Make Now</div>
+        <div class="chip" id="chip-stir" aria-pressed="false">Stir</div>
+        <div class="chip" id="chip-shake" aria-pressed="false">Shake</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="view-cocktails">
+      <div class="grid" id="grid"></div>
+      <footer id="foot"></footer>
+    </div>
+
+    <div id="view-inventory" style="display:none">
+      <div class="sectionTitle">Inventory</div>
+      <div class="invgrid" id="invgrid"></div>
+    </div>
+
+    <div id="view-choice" style="display:none">
+      <div class="sectionTitle">Bartender’s Choice</div>
+      <div class="small">Pick a mood. I’ll show you the best matches from your favorites + house menu.</div>
+      <div class="btnrow" style="margin-top:12px">
+        <button class="btn" data-mood="bitter">Bitter & Balanced</button>
+        <button class="btn" data-mood="strong">Strong & Elegant</button>
+        <button class="btn" data-mood="smoky">Smoky</button>
+        <button class="btn" data-mood="fresh">Bright & Fresh</button>
+        <button class="btn" data-mood="sweet">Sweet but Serious</button>
+      </div>
+      <div style="margin-top:14px" class="grid" id="choicegrid"></div>
+    </div>
+  </main>
+
+  <div class="navbar">
+    <button class="navbtn active" id="nav-cocktails">Cocktails</button>
+    <button class="navbtn" id="nav-inventory">Inventory</button>
+    <button class="navbtn" id="nav-choice">Choice</button>
+  </div>
+
+  <dialog id="dlg">
+    <div class="dhead">
+      <div class="glasswrap">
+        <div id="dlg-glass"></div>
+        <div>
+          <div class="title" id="dlg-title"></div>
+          <div class="meta" id="dlg-meta"></div>
+        </div>
+      </div>
+      <button class="btn" id="dlg-close">Close</button>
+    </div>
+    <div class="dbody">
+      <div class="kv" id="dlg-kv"></div>
+      <hr>
+      <div class="small"><b>Ingredients</b></div>
+      <ul id="dlg-ing"></ul>
+      <div class="small" id="dlg-missing" style="margin-top:8px"></div>
+      <hr>
+      <div class="small"><b>Method</b></div>
+      <ol id="dlg-steps"></ol>
+      <div class="small" id="dlg-garnish" style="margin-top:10px"></div>
+      <div class="small" id="dlg-notes" style="margin-top:8px"></div>
+      <div class="btnrow">
+        <button class="btn primary" id="btn-make">Start Make Mode</button>
+        <button class="btn" id="btn-reset">Reset Checks</button>
+      </div>
+      <div id="makebox" style="display:none; margin-top:10px">
+        <div class="small"><b>Make Mode</b> (tap to check off)</div>
+        <div class="checklist" id="checklist"></div>
+      </div>
+      <div class="small" style="margin-top:10px">Source: <a id="dlg-src" target="_blank" rel="noreferrer">reference</a></div>
+    </div>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>

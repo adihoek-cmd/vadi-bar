@@ -1,0 +1,459 @@
+{
+  "cocktails": [
+    {
+      "id": "negroni",
+      "name": "Negroni",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/negroni/",
+      "ingredients": [
+        {
+          "item": "Gin",
+          "amount_ml": 30,
+          "requires": "Gin"
+        },
+        {
+          "item": "Campari",
+          "amount_ml": 30,
+          "requires": "Campari"
+        },
+        {
+          "item": "Sweet vermouth",
+          "amount_ml": 30,
+          "requires": "Sweet vermouth"
+        }
+      ],
+      "garnish": "Orange peel",
+      "steps": [
+        "Add gin, Campari, and sweet vermouth to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large ice cube.",
+        "Express an orange peel over the drink and garnish."
+      ]
+    },
+    {
+      "id": "vieux-carre",
+      "name": "Vieux Carré",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/vieux-carre/",
+      "ingredients": [
+        {
+          "item": "Rye whiskey",
+          "amount_ml": 22.5,
+          "requires": "Rye whiskey"
+        },
+        {
+          "item": "Cognac",
+          "amount_ml": 22.5,
+          "requires": "Cognac/Brandy"
+        },
+        {
+          "item": "Sweet vermouth",
+          "amount_ml": 22.5,
+          "requires": "Sweet vermouth"
+        },
+        {
+          "item": "Bénédictine",
+          "amount_ml": 10,
+          "requires": "Bénédictine"
+        },
+        {
+          "item": "Angostura bitters",
+          "amount": "2 dashes",
+          "requires": "Angostura bitters"
+        },
+        {
+          "item": "Peychaud’s bitters",
+          "amount": "2 dashes",
+          "requires": "Angostura bitters",
+          "optional_note": "If you don’t have Peychaud’s, use 4 dashes Angostura total."
+        }
+      ],
+      "garnish": "Lemon peel (or cherry)",
+      "steps": [
+        "Add all ingredients to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over fresh ice.",
+        "Garnish with a lemon peel (or cherry)."
+      ]
+    },
+    {
+      "id": "penicillin",
+      "name": "Penicillin",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "shake+float",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/penicillin/",
+      "ingredients": [
+        {
+          "item": "Blended Scotch",
+          "amount_ml": 60,
+          "requires": "Blended Scotch"
+        },
+        {
+          "item": "Fresh lemon juice",
+          "amount_ml": 22.5,
+          "requires": "Fresh lemon"
+        },
+        {
+          "item": "Honey-ginger syrup",
+          "amount_ml": 15,
+          "requires": "Honey-ginger syrup"
+        },
+        {
+          "item": "Peated Scotch (float)",
+          "amount_ml": 7.5,
+          "requires": "Peated Scotch"
+        }
+      ],
+      "garnish": "Candied ginger (optional)",
+      "steps": [
+        "Shake blended Scotch, lemon juice, and honey-ginger syrup with ice.",
+        "Strain into a rocks glass over fresh ice.",
+        "Float the peated Scotch on top."
+      ]
+    },
+    {
+      "id": "monte-carlo",
+      "name": "Monte Carlo",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/monte-carlo/",
+      "ingredients": [
+        {
+          "item": "Rye whiskey",
+          "amount_ml": 60,
+          "requires": "Rye whiskey"
+        },
+        {
+          "item": "Bénédictine",
+          "amount_ml": 15,
+          "requires": "Bénédictine"
+        },
+        {
+          "item": "Angostura bitters",
+          "amount": "1 dash",
+          "requires": "Angostura bitters"
+        }
+      ],
+      "garnish": "Lemon twist (optional)",
+      "steps": [
+        "Add rye, Bénédictine, and bitters to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large cube."
+      ]
+    },
+    {
+      "id": "sidecar",
+      "name": "Sidecar",
+      "liked": true,
+      "house": true,
+      "glass": "coupe",
+      "method": "shake",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/sidecar/",
+      "ingredients": [
+        {
+          "item": "Cognac",
+          "amount_ml": 50,
+          "requires": "Cognac/Brandy"
+        },
+        {
+          "item": "Cointreau",
+          "amount_ml": 22.5,
+          "requires": "Cointreau"
+        },
+        {
+          "item": "Fresh lemon juice",
+          "amount_ml": 22.5,
+          "requires": "Fresh lemon"
+        }
+      ],
+      "garnish": "Orange twist (sugar rim optional)",
+      "steps": [
+        "Shake cognac, Cointreau, and lemon juice with ice.",
+        "Fine-strain into a chilled coupe.",
+        "Garnish with an orange twist."
+      ]
+    },
+    {
+      "id": "margarita",
+      "name": "Margarita",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "shake",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/margarita/",
+      "ingredients": [
+        {
+          "item": "Tequila",
+          "amount_ml": 50,
+          "requires": "Tequila"
+        },
+        {
+          "item": "Cointreau",
+          "amount_ml": 22.5,
+          "requires": "Cointreau"
+        },
+        {
+          "item": "Fresh lime juice",
+          "amount_ml": 22.5,
+          "requires": "Fresh lime"
+        }
+      ],
+      "garnish": "Lime wheel (salt rim optional)",
+      "steps": [
+        "Shake tequila, Cointreau, and lime juice with ice.",
+        "Strain into a rocks glass over fresh ice (salt rim optional).",
+        "Garnish with a lime wheel."
+      ]
+    },
+    {
+      "id": "rusty-nail",
+      "name": "Rusty Nail",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/rusty-nail/",
+      "ingredients": [
+        {
+          "item": "Scotch",
+          "amount_ml": 45,
+          "requires": "Blended Scotch"
+        },
+        {
+          "item": "Drambuie",
+          "amount_ml": 22.5,
+          "requires": "Drambuie"
+        }
+      ],
+      "garnish": "Lemon twist (optional)",
+      "steps": [
+        "Add Scotch and Drambuie to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large cube."
+      ]
+    },
+    {
+      "id": "bb",
+      "name": "B&B (Brandy & Bénédictine)",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Classic 1:1",
+      "source_url": "https://www.thespruceeats.com/brandy-and-benedictine-recipe-759285",
+      "ingredients": [
+        {
+          "item": "Cognac/Brandy",
+          "amount_ml": 45,
+          "requires": "Cognac/Brandy"
+        },
+        {
+          "item": "Bénédictine",
+          "amount_ml": 45,
+          "requires": "Bénédictine"
+        }
+      ],
+      "garnish": "Lemon twist (optional)",
+      "steps": [
+        "Add brandy and Bénédictine to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass (over a large cube or serve up)."
+      ]
+    },
+    {
+      "id": "maple-old-fashioned",
+      "name": "Maple Old Fashioned (Rum)",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/maple-old-fashioned/",
+      "ingredients": [
+        {
+          "item": "Dark rum",
+          "amount_ml": 60,
+          "requires": "Dark rum"
+        },
+        {
+          "item": "Maple syrup",
+          "amount_ml": 15,
+          "requires": "Maple syrup"
+        },
+        {
+          "item": "Angostura bitters",
+          "amount": "2 dashes",
+          "requires": "Angostura bitters"
+        }
+      ],
+      "garnish": "Orange twist",
+      "steps": [
+        "Add rum, maple syrup, and bitters to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large cube.",
+        "Garnish with an orange twist."
+      ]
+    }
+  ],
+  "inventory": {
+    "spirits": [
+      {
+        "name": "Gin",
+        "have": true,
+        "examples": [
+          "Tanqueray No. Ten",
+          "Tanqueray Rangpur",
+          "Deer Premium Dry",
+          "Deer Vegetable Dry",
+          "Votanikon",
+          "Zohara Gin"
+        ]
+      },
+      {
+        "name": "Rye whiskey",
+        "have": true,
+        "examples": [
+          "Woodford Reserve Rye"
+        ]
+      },
+      {
+        "name": "Bourbon",
+        "have": true,
+        "examples": [
+          "Woodford Reserve Bourbon"
+        ]
+      },
+      {
+        "name": "Blended Scotch",
+        "have": true,
+        "examples": [
+          "Compass Box Spice Tree",
+          "Talon’s Select"
+        ]
+      },
+      {
+        "name": "Peated Scotch",
+        "have": true,
+        "examples": [
+          "Laphroaig 10",
+          "Kilchoman Machir Bay",
+          "Talisker 10"
+        ]
+      },
+      {
+        "name": "Cognac/Brandy",
+        "have": true,
+        "examples": [
+          "Courvoisier VS",
+          "Torres 10"
+        ]
+      },
+      {
+        "name": "Tequila",
+        "have": true,
+        "examples": [
+          "Don Julio 1942",
+          "Patrón Silver",
+          "Cenote Añejo",
+          "Jose Cuervo Especial"
+        ]
+      },
+      {
+        "name": "Dark rum",
+        "have": true,
+        "examples": [
+          "Kraken (spiced)",
+          "El Supremo 8",
+          "Calypso Red Rum",
+          "Smith & Cross (funky)"
+        ]
+      }
+    ],
+    "modifiers": [
+      {
+        "name": "Campari",
+        "have": true
+      },
+      {
+        "name": "Sweet vermouth",
+        "have": true,
+        "examples": [
+          "Martini Rosso",
+          "Julius Vermut"
+        ]
+      },
+      {
+        "name": "Bénédictine",
+        "have": true
+      },
+      {
+        "name": "Drambuie",
+        "have": true
+      },
+      {
+        "name": "Cointreau",
+        "have": true
+      }
+    ],
+    "syrups": [
+      {
+        "name": "Double simple syrup (2:1)",
+        "have": true,
+        "homemade": true
+      },
+      {
+        "name": "Honey-ginger syrup",
+        "have": true,
+        "homemade": true
+      },
+      {
+        "name": "Limoncello",
+        "have": true,
+        "homemade": true
+      }
+    ],
+    "pantry": [
+      {
+        "name": "Fresh lemon",
+        "have": true
+      },
+      {
+        "name": "Fresh lime",
+        "have": true
+      },
+      {
+        "name": "Angostura bitters",
+        "have": true
+      },
+      {
+        "name": "Maple syrup",
+        "have": true
+      },
+      {
+        "name": "Ice",
+        "have": true
+      },
+      {
+        "name": "Orange (peel/twist)",
+        "have": true
+      }
+    ]
+  }
+}

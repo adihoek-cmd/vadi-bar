@@ -1,0 +1,93 @@
+:root{
+  --bg:#0b0b0b; --card:#141414; --muted:#b7b7b7; --text:#f2f2f2;
+  --accent:#d7b45a; --line:#2a2a2a; --chip:#1e1e1e;
+  --ok:#39d98a; --warn:#ffcc66; --bad:#ff5c5c;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text);}
+header{
+  position:sticky; top:0; z-index:10;
+  background:linear-gradient(180deg, rgba(11,11,11,0.98), rgba(11,11,11,0.86));
+  border-bottom:1px solid var(--line);
+  padding:14px 14px 10px;
+}
+h1{margin:0; font-size:18px; letter-spacing:.3px}
+.sub{color:var(--muted); font-size:12px; margin-top:2px}
+.controls{display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;}
+input[type="search"]{
+  flex:1; min-width:220px; padding:10px 12px; border-radius:12px;
+  border:1px solid var(--line); background:#0f0f0f; color:var(--text);
+}
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  padding:8px 10px; border-radius:999px; border:1px solid var(--line);
+  background:var(--chip); color:var(--text); font-size:12px; cursor:pointer; user-select:none;
+}
+.chip[aria-pressed="true"]{border-color:var(--accent); color:var(--accent)}
+main{padding:14px; max-width:980px; margin:0 auto; padding-bottom:88px;}
+.grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:18px;
+  padding:12px 12px 10px;
+}
+.row{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+.title{font-weight:800; font-size:16px; margin:0}
+.meta{color:var(--muted); font-size:12px; margin-top:2px}
+.badges{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+.badge{
+  display:inline-flex; align-items:center; gap:6px;
+  border:1px solid var(--line); background:#101010; padding:6px 8px; border-radius:999px;
+  font-size:12px; color:var(--muted);
+}
+.badge.liked{color:var(--ok); border-color:rgba(57,217,138,0.25)}
+.badge.method{color:var(--warn); border-color:rgba(255,204,102,0.25)}
+.badge.ok{color:var(--ok); border-color:rgba(57,217,138,0.25)}
+.badge.missing{color:var(--bad); border-color:rgba(255,92,92,0.25)}
+hr{border:none; border-top:1px solid var(--line); margin:10px 0}
+ul,ol{margin:8px 0 0 18px; padding:0}
+li{margin:4px 0}
+.small{color:var(--muted); font-size:12px}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+footer{padding:18px 14px; color:var(--muted); font-size:12px; text-align:center}
+dialog{
+  border:none; border-radius:18px; background:var(--card); color:var(--text);
+  width:min(760px, 92vw);
+  box-shadow:0 20px 80px rgba(0,0,0,0.55);
+}
+dialog::backdrop{background:rgba(0,0,0,0.6)}
+.dhead{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:14px 14px 0}
+.dbody{padding:10px 14px 14px}
+.btn{
+  border:1px solid var(--line); background:#101010; color:var(--text);
+  padding:10px 12px; border-radius:12px; cursor:pointer;
+}
+.btn.primary{border-color:rgba(215,180,90,0.5); color:var(--accent)}
+.btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+.svgglass{width:34px; height:34px; opacity:.9}
+.glasswrap{display:flex; align-items:center; gap:10px}
+.kv{display:flex; gap:10px; flex-wrap:wrap}
+.kv .badge{font-size:11px}
+.navbar{
+  position:fixed; left:0; right:0; bottom:0;
+  border-top:1px solid var(--line);
+  background:rgba(11,11,11,0.94);
+  backdrop-filter: blur(8px);
+  display:flex; justify-content:center; gap:8px;
+  padding:10px 10px;
+}
+.navbtn{
+  min-width:110px;
+  border:1px solid var(--line); background:#101010; color:var(--muted);
+  padding:10px 12px; border-radius:14px; cursor:pointer;
+}
+.navbtn.active{border-color:rgba(215,180,90,0.6); color:var(--accent)}
+.sectionTitle{font-size:14px; font-weight:800; margin:4px 0 8px}
+.invgrid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px}
+.item{display:flex; justify-content:space-between; gap:10px}
+.pill{font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted)}
+.pill.yes{color:var(--ok); border-color:rgba(57,217,138,0.25)}
+.pill.no{color:var(--bad); border-color:rgba(255,92,92,0.25)}
+.checklist label{display:flex; gap:10px; align-items:flex-start; margin:8px 0}
+.checklist input{transform: translateY(2px);}
