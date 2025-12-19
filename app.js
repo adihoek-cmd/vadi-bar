@@ -847,7 +847,10 @@ function initWheel(){
   });
   const list = getWheelCocktails();
   drawWheel(list.map(c=>c.name), 0);
+  const sbtn = $("btn-surprise-online");
+  if(sbtn) sbtn.addEventListener("click", openSurpriseSearch);
 }
+
 
 // --- Cocktail import & manual add ---
 function parseAmountToMl(line){
@@ -1069,4 +1072,52 @@ function initCocktailAdd(){
   if(btnClear){
     btnClear.addEventListener("click", clearCocktailForm);
   }
+}
+
+// --- Surprise online search ---
+function pickRandom(arr, n){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a.slice(0, Math.min(n, a.length));
+}
+
+function buildSurpriseQuery(includeModifiers=false){
+  const inv = mergedInventory();
+  const have = (inv.items||[]).filter(x=>x.have);
+  // build pool: prefer "kind" but include 1-2 brand labels
+  const spirits = have.filter(x=>x.category==="spirit");
+  const modifiers = have.filter(x=>x.category==="modifier");
+  const pool = includeModifiers ? spirits.concat(modifiers) : spirits;
+
+  // If nothing, fall back
+  if(!pool.length) return "cocktail recipe";
+
+  // pick 3-5 terms; favor kinds, then labels
+  const kindTerms = [...new Set(pool.map(x=>x.kind).filter(Boolean))];
+  const labelTerms = [...new Set(pool.map(x=>x.label).filter(Boolean))];
+
+  const terms = pickRandom(kindTerms, 3).concat(pickRandom(labelTerms, 2));
+  // clean terms
+  return "cocktail recipe " + terms.map(t=>String(t).replace(/[^\w\s\-&/]/g,"").trim()).filter(Boolean).join(" ");
+}
+
+function openSurpriseSearch(){
+  const src = $("surprise-source")?.value || "liquor";
+  const mode = $("surprise-mode")?.value || "spirits";
+  const q = buildSurpriseQuery(mode==="all");
+  const display = $("surpriseQuery");
+  if(display) display.textContent = q;
+
+  let url;
+  if(src==="liquor"){
+    // Use Google search but strongly biased to Liquor.com (they don't have a stable public on-site search endpoint)
+    const qq = "site:liquor.com " + q;
+    url = "https://www.google.com/search?q=" + encodeURIComponent(qq);
+  }else{
+    url = "https://www.google.com/search?q=" + encodeURIComponent(q);
+  }
+  window.open(url, "_blank", "noopener");
 }
