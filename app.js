@@ -96,7 +96,7 @@ function badgeHTML(c, inv){
 }
 
 function cardHTML(c, inv){
-  return `<div class="card" data-id="${c.id}" onclick="openDlg(\'${c.id}\')">
+  return `<div class="card" data-id="${c.id}" onclick="openDlg('${c.id}')">
     <div class="row">
       <div>
         <div class="cocktailHeader"><div class="title">${c.name}</div><div class="glassIcon" title="${c.glass||""}">${glassEmoji(c.glass)}</div></div>
