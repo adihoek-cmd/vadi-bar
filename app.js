@@ -412,7 +412,17 @@ function registerSW(){
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("./sw.js").catch(()=>{}); });
   }
 }
-async function loadBase(){ const resp=await fetch("./data/vadi-bar.json"); BASE=await resp.json(); }
+async function loadBase(){
+  try{
+    const resp = await fetch("./data/vadi-bar.json", {cache:"no-cache"});
+    if(!resp.ok) throw new Error("HTTP "+resp.status);
+    BASE = await resp.json();
+  }catch(e){
+    BASE = {inventory:{items:[]}, cocktails:[]};
+    const msg = "Could not load base data (data/vadi-bar.json). This is usually a GitHub Pages path/cache issue. Open the site in Chrome (not the installed icon), clear site storage, and reload.";
+    alert(msg);
+  }
+}
 async function init(){
   loadUser();
   await loadBase();
@@ -457,5 +467,18 @@ $("btn-reset-inv").addEventListener("click",()=>{
   renderInventory(); renderCocktails();
   alert("Inventory reset. You should now see per-bottle items from the base list.");
 });
+
+$("btn-restore-inv").addEventListener("click",()=>{
+  if(!BASE || !BASE.inventory || !Array.isArray(BASE.inventory.items)){
+    alert("Base inventory failed to load. Refresh the page (and clear site storage) then try again.");
+    return;
+  }
+  if(!confirm("This will overwrite this device's inventory list with the default bottles (and set them ON). Continue?")) return;
+  USER.inventory = {items: BASE.inventory.items.map(it=>({category:it.category, kind:it.kind, label:it.label, have:true}))};
+  saveUser();
+  renderInventory(); renderCocktails();
+  alert("Restored default inventory.");
+});
+
 
 init();
