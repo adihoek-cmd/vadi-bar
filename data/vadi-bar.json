@@ -617,7 +617,7 @@
       "name": "Margarita",
       "liked": true,
       "house": true,
-      "glass": "rocks",
+      "glass": "margarita",
       "method": "shake",
       "source": "Liquor.com",
       "source_url": "https://www.liquor.com/recipes/margarita/",

@@ -63,3 +63,8 @@ details.acc>summary::-webkit-details-marker{display:none}
 
 .glassIcon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line);border-radius:10px;font-size:16px}
 .cocktailHeader{display:flex;align-items:center;justify-content:space-between;gap:10px}
+
+@media (max-width: 420px){
+  .navbar{flex-wrap:wrap; gap:6px; padding:8px 8px}
+  .navbtn{min-width:88px; padding:8px 10px; font-size:13px; border-radius:12px}
+}
