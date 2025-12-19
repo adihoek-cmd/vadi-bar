@@ -1,22 +1,16 @@
-# The Vadi Bar (PWA) — v2
+# The Vadi Bar — PWA v3
 
-Includes:
-- Structured Inventory (Spirits / Modifiers / Syrups / Pantry)
-- Cocktail Index with:
-  - Liked
-  - House Menu
-  - Can Make Now (auto from inventory)
-- Bartender’s Choice (mood picker → recommendations)
-- Make Mode (step checklist with persistent checks)
+What’s new:
+- Update inventory *in the app* (no file edits)
+- Pantry toggles included (lemons/limes/bitters/etc.)
+- Add your own recipes in the app (saved on device)
+- Export / Import backup JSON (move phones / restore)
+- Barcode scan (if your phone browser supports it)
 
-## Run locally
-Python:
-  python -m http.server 8000
-Open:
-  http://localhost:8000
+Run locally:
+1) Open Command Prompt in the folder
+2) python -m http.server 8000
+3) Open http://localhost:8000
 
-## Install on phone
-Host the folder somewhere (GitHub Pages / Netlify / any static host), open in Chrome → Add to Home screen.
-
-## Edit inventory / cocktails
-data/vadi-bar.json
+Phone:
+Host the folder (GitHub Pages / Netlify) and open the URL on your phone → Add to Home Screen.

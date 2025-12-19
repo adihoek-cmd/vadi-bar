@@ -1,4 +1,148 @@
 {
+  "inventory": {
+    "spirits": [
+      {
+        "name": "Gin",
+        "have": true,
+        "examples": [
+          "Tanqueray No. Ten",
+          "Tanqueray Rangpur",
+          "Deer Premium Dry",
+          "Deer Vegetable Dry",
+          "Votanikon",
+          "Zohara Gin"
+        ]
+      },
+      {
+        "name": "Rye whiskey",
+        "have": true,
+        "examples": [
+          "Woodford Reserve Rye"
+        ]
+      },
+      {
+        "name": "Bourbon",
+        "have": true,
+        "examples": [
+          "Woodford Reserve Bourbon"
+        ]
+      },
+      {
+        "name": "Blended Scotch",
+        "have": true,
+        "examples": [
+          "Compass Box Spice Tree",
+          "Talon’s Select"
+        ]
+      },
+      {
+        "name": "Peated Scotch",
+        "have": true,
+        "examples": [
+          "Laphroaig 10",
+          "Kilchoman Machir Bay",
+          "Talisker 10"
+        ]
+      },
+      {
+        "name": "Cognac/Brandy",
+        "have": true,
+        "examples": [
+          "Courvoisier VS",
+          "Torres 10"
+        ]
+      },
+      {
+        "name": "Tequila",
+        "have": true,
+        "examples": [
+          "Don Julio 1942",
+          "Patrón Silver",
+          "Cenote Añejo",
+          "Jose Cuervo Especial"
+        ]
+      },
+      {
+        "name": "Dark rum",
+        "have": true,
+        "examples": [
+          "Kraken (spiced)",
+          "El Supremo 8",
+          "Calypso Red Rum",
+          "Smith & Cross (funky)"
+        ]
+      }
+    ],
+    "modifiers": [
+      {
+        "name": "Campari",
+        "have": true
+      },
+      {
+        "name": "Sweet vermouth",
+        "have": true,
+        "examples": [
+          "Martini Rosso",
+          "Julius Vermut"
+        ]
+      },
+      {
+        "name": "Bénédictine",
+        "have": true
+      },
+      {
+        "name": "Drambuie",
+        "have": true
+      },
+      {
+        "name": "Cointreau",
+        "have": true
+      }
+    ],
+    "syrups": [
+      {
+        "name": "Double simple syrup (2:1)",
+        "have": true,
+        "homemade": true
+      },
+      {
+        "name": "Honey-ginger syrup",
+        "have": true,
+        "homemade": true
+      },
+      {
+        "name": "Limoncello",
+        "have": true,
+        "homemade": true
+      }
+    ],
+    "pantry": [
+      {
+        "name": "Fresh lemon",
+        "have": true
+      },
+      {
+        "name": "Fresh lime",
+        "have": true
+      },
+      {
+        "name": "Angostura bitters",
+        "have": true
+      },
+      {
+        "name": "Maple syrup",
+        "have": true
+      },
+      {
+        "name": "Ice",
+        "have": true
+      },
+      {
+        "name": "Orange (peel/twist)",
+        "have": true
+      }
+    ]
+  },
   "cocktails": [
     {
       "id": "negroni",
@@ -307,153 +451,9 @@
       "steps": [
         "Add rum, maple syrup, and bitters to a mixing glass with ice.",
         "Stir until well-chilled.",
-        "Strain into a rocks glass over a large cube.",
+        "Strain into a rocks glass over a large ice cube.",
         "Garnish with an orange twist."
       ]
     }
-  ],
-  "inventory": {
-    "spirits": [
-      {
-        "name": "Gin",
-        "have": true,
-        "examples": [
-          "Tanqueray No. Ten",
-          "Tanqueray Rangpur",
-          "Deer Premium Dry",
-          "Deer Vegetable Dry",
-          "Votanikon",
-          "Zohara Gin"
-        ]
-      },
-      {
-        "name": "Rye whiskey",
-        "have": true,
-        "examples": [
-          "Woodford Reserve Rye"
-        ]
-      },
-      {
-        "name": "Bourbon",
-        "have": true,
-        "examples": [
-          "Woodford Reserve Bourbon"
-        ]
-      },
-      {
-        "name": "Blended Scotch",
-        "have": true,
-        "examples": [
-          "Compass Box Spice Tree",
-          "Talon’s Select"
-        ]
-      },
-      {
-        "name": "Peated Scotch",
-        "have": true,
-        "examples": [
-          "Laphroaig 10",
-          "Kilchoman Machir Bay",
-          "Talisker 10"
-        ]
-      },
-      {
-        "name": "Cognac/Brandy",
-        "have": true,
-        "examples": [
-          "Courvoisier VS",
-          "Torres 10"
-        ]
-      },
-      {
-        "name": "Tequila",
-        "have": true,
-        "examples": [
-          "Don Julio 1942",
-          "Patrón Silver",
-          "Cenote Añejo",
-          "Jose Cuervo Especial"
-        ]
-      },
-      {
-        "name": "Dark rum",
-        "have": true,
-        "examples": [
-          "Kraken (spiced)",
-          "El Supremo 8",
-          "Calypso Red Rum",
-          "Smith & Cross (funky)"
-        ]
-      }
-    ],
-    "modifiers": [
-      {
-        "name": "Campari",
-        "have": true
-      },
-      {
-        "name": "Sweet vermouth",
-        "have": true,
-        "examples": [
-          "Martini Rosso",
-          "Julius Vermut"
-        ]
-      },
-      {
-        "name": "Bénédictine",
-        "have": true
-      },
-      {
-        "name": "Drambuie",
-        "have": true
-      },
-      {
-        "name": "Cointreau",
-        "have": true
-      }
-    ],
-    "syrups": [
-      {
-        "name": "Double simple syrup (2:1)",
-        "have": true,
-        "homemade": true
-      },
-      {
-        "name": "Honey-ginger syrup",
-        "have": true,
-        "homemade": true
-      },
-      {
-        "name": "Limoncello",
-        "have": true,
-        "homemade": true
-      }
-    ],
-    "pantry": [
-      {
-        "name": "Fresh lemon",
-        "have": true
-      },
-      {
-        "name": "Fresh lime",
-        "have": true
-      },
-      {
-        "name": "Angostura bitters",
-        "have": true
-      },
-      {
-        "name": "Maple syrup",
-        "have": true
-      },
-      {
-        "name": "Ice",
-        "have": true
-      },
-      {
-        "name": "Orange (peel/twist)",
-        "have": true
-      }
-    ]
-  }
+  ]
 }

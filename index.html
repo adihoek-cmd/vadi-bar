@@ -12,7 +12,7 @@
 <body>
   <header>
     <h1>The Vadi Bar</h1>
-    <div class="sub">Offline-first PWA · Favorites + House Menu · “Can I make it?” built in</div>
+    <div class="sub">Offline-first PWA · Toggle inventory in-app · Add recipes (saved on device)</div>
     <div class="controls" id="controls">
       <input id="q" type="search" placeholder="Search cocktails (e.g., negroni, rye, benedictine)..." autocomplete="off" />
       <div class="chips" role="group" aria-label="Filters">
@@ -33,12 +33,48 @@
 
     <div id="view-inventory" style="display:none">
       <div class="sectionTitle">Inventory</div>
+      <div class="small">Toggle what you have. This drives “Can Make Now”.</div>
       <div class="invgrid" id="invgrid"></div>
+
+      <div style="margin-top:14px" class="card">
+        <div class="title">Quick update</div>
+        <div class="small">Add a new inventory item (saved on this device).</div>
+        <div class="formgrid" style="margin-top:8px">
+          <div>
+            <div class="field"><label class="mini">Item name</label><input id="inv-name" type="text" placeholder="e.g., Dry vermouth"></div>
+          </div>
+          <div>
+            <div class="field"><label class="mini">Category</label>
+              <select id="inv-cat">
+                <option value="spirits">Spirits</option>
+                <option value="modifiers">Modifiers</option>
+                <option value="syrups">Syrups</option>
+                <option value="pantry">Pantry</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="btnrow">
+          <button class="btn primary" id="inv-add">Add item</button>
+          <button class="btn" id="inv-scan">Scan barcode (if supported)</button>
+        </div>
+        <div class="small" id="inv-scan-msg" style="margin-top:6px"></div>
+      </div>
+
+      <div style="margin-top:14px" class="card">
+        <div class="title">Backup</div>
+        <div class="small">Export/import your device changes (inventory + added recipes).</div>
+        <div class="btnrow">
+          <button class="btn" id="btn-export">Export JSON</button>
+          <button class="btn" id="btn-import">Import JSON</button>
+          <input id="file-import" type="file" accept="application/json" style="display:none">
+        </div>
+      </div>
     </div>
 
     <div id="view-choice" style="display:none">
       <div class="sectionTitle">Bartender’s Choice</div>
-      <div class="small">Pick a mood. I’ll show you the best matches from your favorites + house menu.</div>
+      <div class="small">Pick a mood. I’ll show the best matches (from your full list).</div>
       <div class="btnrow" style="margin-top:12px">
         <button class="btn" data-mood="bitter">Bitter & Balanced</button>
         <button class="btn" data-mood="strong">Strong & Elegant</button>
@@ -48,12 +84,79 @@
       </div>
       <div style="margin-top:14px" class="grid" id="choicegrid"></div>
     </div>
+
+    <div id="view-add" style="display:none">
+      <div class="sectionTitle">Add a recipe</div>
+      <div class="small">Saved on this device (offline). Export a backup from the Inventory tab.</div>
+
+      <div class="card">
+        <div class="formgrid">
+          <div>
+            <div class="field"><label class="mini">Cocktail name</label><input id="r-name" type="text" placeholder="e.g., Boulevardier"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label class="mini">Glass</label>
+              <select id="r-glass">
+                <option value="rocks">Rocks</option>
+                <option value="coupe">Coupe</option>
+                <option value="mug">Mug</option>
+              </select>
+            </div>
+            <div class="field"><label class="mini">Method</label>
+              <select id="r-method">
+                <option value="stir">Stir</option>
+                <option value="shake">Shake</option>
+                <option value="shake+float">Shake + Float</option>
+                <option value="build">Build</option>
+              </select>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field"><label class="mini">Liked?</label>
+              <select id="r-liked"><option value="true">Yes</option><option value="false">No</option></select>
+            </div>
+            <div class="field"><label class="mini">House menu?</label>
+              <select id="r-house"><option value="false">No</option><option value="true">Yes</option></select>
+            </div>
+          </div>
+          <div>
+            <div class="field"><label class="mini">Garnish</label><input id="r-garnish" type="text" placeholder="e.g., Orange peel"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label class="mini">Source label</label><input id="r-source" type="text" placeholder="e.g., Liquor.com"></div>
+            <div class="field"><label class="mini">Source URL</label><input id="r-url" type="text" placeholder="https://..."></div>
+          </div>
+          <div>
+            <div class="field"><label class="mini">Notes (optional)</label><textarea id="r-notes" placeholder="Optional notes..."></textarea></div>
+          </div>
+        </div>
+
+        <fieldset style="margin-top:12px">
+          <legend>Ingredients</legend>
+          <div class="small">Each line: Ingredient | amount (ml or text) | requires-key (must match an inventory item name)</div>
+          <textarea id="r-ings" placeholder="Dark rum | 60 | Dark rum&#10;Maple syrup | 15 | Maple syrup&#10;Angostura bitters | 2 dashes | Angostura bitters"></textarea>
+        </fieldset>
+
+        <fieldset style="margin-top:12px">
+          <legend>Steps</legend>
+          <div class="small">One step per line.</div>
+          <textarea id="r-steps" placeholder="Add ingredients to a mixing glass with ice&#10;Stir until well-chilled&#10;Strain over a large cube"></textarea>
+        </fieldset>
+
+        <div class="btnrow" style="margin-top:12px">
+          <button class="btn primary" id="r-save">Save recipe</button>
+          <button class="btn" id="r-clear">Clear</button>
+        </div>
+        <div class="small" id="r-msg" style="margin-top:8px"></div>
+      </div>
+    </div>
   </main>
 
   <div class="navbar">
     <button class="navbtn active" id="nav-cocktails">Cocktails</button>
     <button class="navbtn" id="nav-inventory">Inventory</button>
     <button class="navbtn" id="nav-choice">Choice</button>
+    <button class="navbtn" id="nav-add">Add Recipe</button>
   </div>
 
   <dialog id="dlg">
@@ -81,6 +184,7 @@
       <div class="btnrow">
         <button class="btn primary" id="btn-make">Start Make Mode</button>
         <button class="btn" id="btn-reset">Reset Checks</button>
+        <button class="btn danger" id="btn-del" title="Deletes only device-added recipes">Delete (if added)</button>
       </div>
       <div id="makebox" style="display:none; margin-top:10px">
         <div class="small"><b>Make Mode</b> (tap to check off)</div>
