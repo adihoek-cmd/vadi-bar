@@ -1,54 +1,48 @@
 let BASE=null;
 let USER={inventory:null,cocktails:[]};
 let CURRENT=null;
-
 const $=id=>document.getElementById(id);
 const normalize=s=>(s||"").toLowerCase();
 
-function slugify(name){
-  return (name||"").toLowerCase().trim().replace(/['"]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");
-}
-function fmtAmt(x){ if(x===undefined||x===null) return ""; if(typeof x==="number") return `${x} ml`; return `${x}`; }
-
-function glassSVG(kind){
-  const common=`class="svgglass" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"`;
-  if(kind==="coupe") return `<svg ${common}><path d="M14 10h36c0 14-9 23-18 23S14 24 14 10Z" stroke="white" stroke-opacity=".7" stroke-width="3"/><path d="M32 33v13" stroke="white" stroke-opacity=".7" stroke-width="3"/><path d="M22 58h20" stroke="white" stroke-opacity=".7" stroke-width="3"/></svg>`;
-  if(kind==="mug") return `<svg ${common}><path d="M18 18h26v30H18V18Z" stroke="white" stroke-opacity=".7" stroke-width="3"/><path d="M44 24h6c4 0 6 3 6 7s-2 7-6 7h-6" stroke="white" stroke-opacity=".7" stroke-width="3"/><path d="M20 52h22" stroke="white" stroke-opacity=".7" stroke-width="3"/></svg>`;
-  return `<svg ${common}><path d="M18 20h28l-4 32H22l-4-32Z" stroke="white" stroke-opacity=".7" stroke-width="3"/><path d="M22 28h20" stroke="white" stroke-opacity=".25" stroke-width="3"/><path d="M24 34h16" stroke="white" stroke-opacity=".25" stroke-width="3"/></svg>`;
-}
+function slugify(name){return (name||"").toLowerCase().trim().replace(/['"]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");}
+function fmtAmt(x){if(x===undefined||x===null) return ""; if(typeof x==="number") return `${x} ml`; return `${x}`;}
 
 function loadUser(){
   try{
     USER.inventory = JSON.parse(localStorage.getItem("vadi.user.inventory")||"null");
     USER.cocktails = JSON.parse(localStorage.getItem("vadi.user.cocktails")||"[]");
-  }catch(e){
-    USER.inventory=null; USER.cocktails=[];
-  }
+  }catch(e){ USER.inventory=null; USER.cocktails=[]; }
+  migrateInventoryIfNeeded();
 }
 function saveUser(){
   localStorage.setItem("vadi.user.inventory", JSON.stringify(USER.inventory));
   localStorage.setItem("vadi.user.cocktails", JSON.stringify(USER.cocktails));
 }
 
+// v3 -> v4 migration
+function migrateInventoryIfNeeded(){
+  if(!USER.inventory) return;
+  if(USER.inventory.items) return;
+  const old = USER.inventory;
+  const items=[];
+  const pushGroup=(group, category)=>{
+    (old[group]||[]).forEach(x=>items.push({category, kind:x.name, label:x.name, have:!!x.have}));
+  };
+  pushGroup("spirits","spirit");
+  pushGroup("modifiers","modifier");
+  pushGroup("syrups","syrup");
+  pushGroup("pantry","pantry");
+  USER.inventory = {items};
+  saveUser();
+}
+
 function mergedInventory(){
   const out = JSON.parse(JSON.stringify(BASE.inventory));
   if(!USER.inventory) return out;
-  const u = USER.inventory;
-  for(const group of ["spirits","modifiers","syrups","pantry"]){
-    const baseItems = out[group] || [];
-    const byName = new Map(baseItems.map(x=>[x.name,x]));
-    (u[group]||[]).forEach(ui=>{
-      if(byName.has(ui.name)){
-        const bi = byName.get(ui.name);
-        bi.have = ui.have;
-        if(ui.examples) bi.examples = ui.examples;
-        if(ui.homemade) bi.homemade = ui.homemade;
-      }else{
-        baseItems.push(ui);
-      }
-    });
-    out[group]=baseItems;
-  }
+  const key = (it)=>`${it.category}||${it.kind}||${it.label}`;
+  const map = new Map((out.items||[]).map(it=>[key(it), it]));
+  (USER.inventory.items||[]).forEach(it=>map.set(key(it), it));
+  out.items = Array.from(map.values());
   return out;
 }
 
@@ -58,20 +52,18 @@ function allCocktails(){
   return Array.from(byId.values());
 }
 
-function inventoryHaveSet(inv){
+function haveKinds(inv){
   const set = new Set();
-  for(const group of ["spirits","modifiers","syrups","pantry"]){
-    (inv[group]||[]).forEach(x=>{ if(x.have) set.add(x.name); });
-  }
+  (inv.items||[]).forEach(it=>{ if(it.have) set.add(it.kind); });
   return set;
 }
 
 function computeMakeability(c, inv){
-  const have = inventoryHaveSet(inv);
+  const have = haveKinds(inv);
   const missing=[];
   (c.ingredients||[]).forEach(i=>{
-    const key=i.requires;
-    if(key && !have.has(key)) missing.push(key);
+    const k=i.requires;
+    if(k && !have.has(k)) missing.push(k);
   });
   return {canMake: missing.length===0, missing:[...new Set(missing)]};
 }
@@ -104,7 +96,6 @@ function cardHTML(c, inv){
         <div class="title">${c.name}</div>
         <div class="meta">${(c.glass||"").toUpperCase()} · ${c.source||""}</div>
       </div>
-      <div>${glassSVG(c.glass)}</div>
     </div>
     <div class="badges">${badgeHTML(c,inv)}</div>
     <hr>
@@ -128,38 +119,53 @@ function renderCocktails(){
   const inv=mergedInventory();
   const list=allCocktails().filter(c=>passesFilters(c,inv));
   $("grid").innerHTML=list.map(c=>cardHTML(c,inv)).join("");
-  $("foot").textContent=`Loaded ${allCocktails().length} cocktails · Showing ${list.length} · Device edits saved locally`;
+  $("foot").textContent=`Loaded ${allCocktails().length} cocktails · Showing ${list.length}`;
   document.querySelectorAll(".card").forEach(el=>el.addEventListener("click",()=>openDlg(el.getAttribute("data-id"))));
 }
 
-function setInventoryHave(group, name, have){
-  if(!USER.inventory) USER.inventory={spirits:[],modifiers:[],syrups:[],pantry:[]};
-  const arr = USER.inventory[group] || (USER.inventory[group]=[]);
-  const idx = arr.findIndex(x=>x.name===name);
-  if(idx>=0) arr[idx].have=have;
-  else arr.push({name,have});
+function ensureUserInv(){
+  if(!USER.inventory) USER.inventory={items:[]};
+  if(!USER.inventory.items) USER.inventory.items=[];
+}
+
+function setItemHave(category, kind, label, have){
+  ensureUserInv();
+  const items = USER.inventory.items;
+  const idx = items.findIndex(it=>it.category===category && it.kind===kind && it.label===label);
+  if(idx>=0) items[idx].have = have;
+  else items.push({category,kind,label,have});
   saveUser();
 }
 
 function renderInventory(){
   const inv=mergedInventory();
-  const sections=[["Spirits","spirits"],["Modifiers","modifiers"],["Syrups","syrups"],["Pantry","pantry"]];
-  $("invgrid").innerHTML=sections.map(([title,key])=>{
-    const items=inv[key]||[];
-    const rows=items.map(it=>{
-      const ex=it.examples?`<div class="small">${it.examples.join(" · ")}</div>`:"";
-      const hm=it.homemade?`<div class="small">Homemade</div>`:"";
-      return `<div class="item">
-        <div><div><b>${it.name}</b></div>${ex}${hm}</div>
-        <div class="switch"><input type="checkbox" ${it.have?"checked":""} data-invkey="${key}" data-name="${it.name}"></div>
-      </div>`;
-    }).join('<div style="height:10px"></div>');
-    return `<div class="card"><div class="title">${title}</div><hr>${rows}</div>`;
-  }).join("");
+  const items = (inv.items||[]).slice();
 
-  document.querySelectorAll('input[type="checkbox"][data-invkey]').forEach(cb=>{
+  const catOrder = {spirit:0, modifier:1, syrup:2, pantry:3};
+  items.sort((a,b)=> (catOrder[a.category]??99)-(catOrder[b.category]??99) || a.label.localeCompare(b.label));
+
+  const prettyCat = (c)=>({spirit:"Spirit", modifier:"Modifier", syrup:"Syrup", pantry:"Pantry"}[c]||c);
+
+  $("invlist").innerHTML = items.map(it=>`
+    <div class="card">
+      <div class="itemrow">
+        <div>
+          <div><b>${it.label}</b></div>
+          <div class="badges" style="margin-top:6px">
+            <span class="badge kind">${prettyCat(it.category)}</span>
+            <span class="badge">${it.kind}</span>
+          </div>
+        </div>
+        <div class="switch">
+          <input type="checkbox" ${it.have?"checked":""} data-cat="${it.category}" data-kind="${it.kind}" data-label="${it.label}">
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll('input[type="checkbox"][data-cat]').forEach(cb=>{
     cb.addEventListener("change",()=>{
-      setInventoryHave(cb.getAttribute("data-invkey"), cb.getAttribute("data-name"), cb.checked);
+      setItemHave(cb.getAttribute("data-cat"), cb.getAttribute("data-kind"), cb.getAttribute("data-label"), cb.checked);
       renderCocktails();
     });
   });
@@ -189,7 +195,6 @@ function openDlg(id){
 
   $("dlg-title").textContent=c.name;
   $("dlg-meta").textContent=`${(c.glass||"").toUpperCase()} · ${c.source||""}`;
-  $("dlg-glass").innerHTML=glassSVG(c.glass);
 
   const kv=[];
   if(c.liked) kv.push(`<span class="badge liked">★ Liked</span>`);
@@ -220,11 +225,9 @@ function startMakeMode(){
   if(!CURRENT) return;
   const key=`checks:${CURRENT.id}`;
   const saved=JSON.parse(localStorage.getItem(key)||"[]");
-  const items=[
-    ...(CURRENT.ingredients||[]).map(i=>`Measure: ${i.item} (${fmtAmt(i.amount_ml ?? i.amount)})`),
-    ...(CURRENT.steps||[]).map(s=>`Step: ${s}`),
-    `Garnish: ${CURRENT.garnish||"—"}`
-  ];
+  const items=[...(CURRENT.ingredients||[]).map(i=>`Measure: ${i.item} (${fmtAmt(i.amount_ml ?? i.amount)})`),
+               ...(CURRENT.steps||[]).map(s=>`Step: ${s}`),
+               `Garnish: ${CURRENT.garnish||"—"}`];
   $("makebox").style.display="block";
   const box=$("checklist"); box.innerHTML="";
   items.forEach((label,idx)=>{
@@ -316,27 +319,27 @@ function addRecipeFromForm(){
 }
 
 function clearRecipeForm(){
-  ["r-name","r-garnish","r-source","r-url","r-notes"].forEach(id=>$(id).value="");
+  ["r-name","r-garnish","r-source","r-url","r-notes","r-ings","r-steps"].forEach(id=>$(id).value="");
   $("r-glass").value="rocks"; $("r-method").value="stir"; $("r-liked").value="true"; $("r-house").value="false";
-  $("r-ings").value=""; $("r-steps").value=""; $("r-msg").textContent="";
+  $("r-msg").textContent="";
 }
 
 function addInventoryItem(){
-  const name=$("inv-name").value.trim();
-  const cat=$("inv-cat").value;
-  const msg=$("inv-scan-msg");
-  if(!name){ msg.textContent="Enter an item name."; return; }
-  if(!USER.inventory) USER.inventory={spirits:[],modifiers:[],syrups:[],pantry:[]};
-  const arr=USER.inventory[cat] || (USER.inventory[cat]=[]);
-  if(!arr.some(x=>x.name===name)) arr.push({name,have:true});
+  const cat=$("add-cat").value;
+  const kind=$("add-kind").value.trim();
+  const label=$("add-label").value.trim() || kind;
+  const msg=$("add-msg");
+  if(!kind){ msg.textContent="Kind is required (must match cocktails)."; return; }
+  ensureUserInv();
+  USER.inventory.items.push({category:cat, kind, label, have:true});
   saveUser();
-  $("inv-name").value="";
-  msg.textContent=`Added: ${name}`;
+  $("add-kind").value=""; $("add-label").value="";
+  msg.textContent=`Added: ${label}`;
   renderInventory(); renderCocktails();
 }
 
 async function scanBarcode(){
-  const msg=$("inv-scan-msg");
+  const msg=$("add-msg");
   msg.textContent="";
   if(!("BarcodeDetector" in window)){ msg.textContent="Barcode scanning not supported on this browser/device."; return; }
   const detector=new BarcodeDetector({formats:["ean_13","ean_8","code_128","qr_code","upc_a","upc_e"]});
@@ -345,7 +348,7 @@ async function scanBarcode(){
   dlg.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 12px 0;color:#f2f2f2">
       <div style="font-weight:800">Scan barcode</div><button id="x" class="btn">Close</button></div>
       <div style="padding:12px"><video id="v" autoplay playsinline style="width:100%;border-radius:14px;border:1px solid #2a2a2a"></video>
-      <div class="small" style="margin-top:8px">Point the camera at a barcode. It will fill the item field.</div></div>`;
+      <div class="small" style="margin-top:8px">Point the camera at a barcode. It will fill the label field.</div></div>`;
   document.body.appendChild(dlg); dlg.showModal();
   let stream=null, raf=null;
   const video=dlg.querySelector("#v");
@@ -365,8 +368,8 @@ async function scanBarcode(){
           const codes=await detector.detect(bitmap);
           if(codes && codes.length){
             const code=codes[0].rawValue||"";
-            $("inv-name").value=code;
-            msg.textContent=`Scanned: ${code} (edit to actual bottle/item name if you want)`;
+            $("add-label").value=code;
+            msg.textContent=`Scanned: ${code} (edit to actual bottle name)`;
             await close(); return;
           }
         }catch(e){}
@@ -395,6 +398,7 @@ function importJSON(file){
       const payload=JSON.parse(reader.result);
       USER.inventory=payload.user_inventory || USER.inventory;
       USER.cocktails=payload.user_cocktails || USER.cocktails;
+      migrateInventoryIfNeeded();
       saveUser();
       renderInventory(); renderCocktails();
       alert("Imported successfully.");
@@ -408,12 +412,7 @@ function registerSW(){
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("./sw.js").catch(()=>{}); });
   }
 }
-
-async function loadBase(){
-  const resp=await fetch("./data/vadi-bar.json");
-  BASE=await resp.json();
-}
-
+async function loadBase(){ const resp=await fetch("./data/vadi-bar.json"); BASE=await resp.json(); }
 async function init(){
   loadUser();
   await loadBase();
@@ -440,8 +439,8 @@ $("nav-add").addEventListener("click",()=>setView("add"));
 
 document.querySelectorAll("[data-mood]").forEach(btn=>btn.addEventListener("click",()=>renderChoice(btn.getAttribute("data-mood"))));
 
-$("inv-add").addEventListener("click",()=>addInventoryItem());
-$("inv-scan").addEventListener("click",()=>scanBarcode());
+$("btn-add-item").addEventListener("click",()=>addInventoryItem());
+$("btn-scan").addEventListener("click",()=>scanBarcode());
 
 $("btn-export").addEventListener("click",()=>exportJSON());
 $("btn-import").addEventListener("click",()=>$("file-import").click());

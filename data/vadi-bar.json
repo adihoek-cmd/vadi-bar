@@ -1,144 +1,232 @@
 {
   "inventory": {
-    "spirits": [
+    "items": [
       {
-        "name": "Gin",
-        "have": true,
-        "examples": [
-          "Tanqueray No. Ten",
-          "Tanqueray Rangpur",
-          "Deer Premium Dry",
-          "Deer Vegetable Dry",
-          "Votanikon",
-          "Zohara Gin"
-        ]
-      },
-      {
-        "name": "Rye whiskey",
-        "have": true,
-        "examples": [
-          "Woodford Reserve Rye"
-        ]
-      },
-      {
-        "name": "Bourbon",
-        "have": true,
-        "examples": [
-          "Woodford Reserve Bourbon"
-        ]
-      },
-      {
-        "name": "Blended Scotch",
-        "have": true,
-        "examples": [
-          "Compass Box Spice Tree",
-          "Talon’s Select"
-        ]
-      },
-      {
-        "name": "Peated Scotch",
-        "have": true,
-        "examples": [
-          "Laphroaig 10",
-          "Kilchoman Machir Bay",
-          "Talisker 10"
-        ]
-      },
-      {
-        "name": "Cognac/Brandy",
-        "have": true,
-        "examples": [
-          "Courvoisier VS",
-          "Torres 10"
-        ]
-      },
-      {
-        "name": "Tequila",
-        "have": true,
-        "examples": [
-          "Don Julio 1942",
-          "Patrón Silver",
-          "Cenote Añejo",
-          "Jose Cuervo Especial"
-        ]
-      },
-      {
-        "name": "Dark rum",
-        "have": true,
-        "examples": [
-          "Kraken (spiced)",
-          "El Supremo 8",
-          "Calypso Red Rum",
-          "Smith & Cross (funky)"
-        ]
-      }
-    ],
-    "modifiers": [
-      {
-        "name": "Campari",
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Tanqueray No. Ten",
         "have": true
       },
       {
-        "name": "Sweet vermouth",
-        "have": true,
-        "examples": [
-          "Martini Rosso",
-          "Julius Vermut"
-        ]
-      },
-      {
-        "name": "Bénédictine",
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Tanqueray Rangpur",
         "have": true
       },
       {
-        "name": "Drambuie",
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Deer Premium Dry",
         "have": true
       },
       {
-        "name": "Cointreau",
-        "have": true
-      }
-    ],
-    "syrups": [
-      {
-        "name": "Double simple syrup (2:1)",
-        "have": true,
-        "homemade": true
-      },
-      {
-        "name": "Honey-ginger syrup",
-        "have": true,
-        "homemade": true
-      },
-      {
-        "name": "Limoncello",
-        "have": true,
-        "homemade": true
-      }
-    ],
-    "pantry": [
-      {
-        "name": "Fresh lemon",
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Deer Vegetable Dry",
         "have": true
       },
       {
-        "name": "Fresh lime",
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Votanikon",
         "have": true
       },
       {
-        "name": "Angostura bitters",
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Zohara Gin",
         "have": true
       },
       {
-        "name": "Maple syrup",
+        "category": "spirit",
+        "kind": "Rye whiskey",
+        "label": "Woodford Reserve Rye",
         "have": true
       },
       {
-        "name": "Ice",
+        "category": "spirit",
+        "kind": "Bourbon",
+        "label": "Woodford Reserve Bourbon",
         "have": true
       },
       {
-        "name": "Orange (peel/twist)",
+        "category": "spirit",
+        "kind": "Blended Scotch",
+        "label": "Compass Box Spice Tree",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Blended Scotch",
+        "label": "Talon’s Select",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Peated Scotch",
+        "label": "Laphroaig 10",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Peated Scotch",
+        "label": "Kilchoman Machir Bay",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Peated Scotch",
+        "label": "Talisker 10",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Cognac/Brandy",
+        "label": "Courvoisier VS",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Cognac/Brandy",
+        "label": "Torres 10",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Don Julio 1942",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Patrón Silver",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Cenote Añejo",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Jose Cuervo Especial",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Kraken (spiced)",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "El Supremo 8",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Calypso Red Rum",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Smith & Cross",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Campari",
+        "label": "Campari",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Martini Rosso",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Julius Vermut",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Bénédictine",
+        "label": "Bénédictine",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Drambuie",
+        "label": "Drambuie",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cointreau",
+        "label": "Cointreau",
+        "have": true
+      },
+      {
+        "category": "syrup",
+        "kind": "Simple syrup (2:1)",
+        "label": "Homemade double simple",
+        "have": true
+      },
+      {
+        "category": "syrup",
+        "kind": "Honey-ginger syrup",
+        "label": "Homemade honey-ginger",
+        "have": true
+      },
+      {
+        "category": "syrup",
+        "kind": "Limoncello",
+        "label": "Homemade limoncello",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Fresh lemon",
+        "label": "Fresh lemon",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Fresh lime",
+        "label": "Fresh lime",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Angostura bitters",
+        "label": "Angostura bitters",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Maple syrup",
+        "label": "Maple syrup",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Ice",
+        "label": "Ice",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Orange (peel/twist)",
+        "label": "Orange (peel/twist)",
         "have": true
       }
     ]
@@ -212,12 +300,6 @@
           "item": "Angostura bitters",
           "amount": "2 dashes",
           "requires": "Angostura bitters"
-        },
-        {
-          "item": "Peychaud’s bitters",
-          "amount": "2 dashes",
-          "requires": "Angostura bitters",
-          "optional_note": "If you don’t have Peychaud’s, use 4 dashes Angostura total."
         }
       ],
       "garnish": "Lemon peel (or cherry)",
