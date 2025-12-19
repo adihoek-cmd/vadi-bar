@@ -1288,3 +1288,26 @@ function quickLiquorImport(url){
   if(url.includes("gold-rush")) return "gold-rush";
   return null;
 }
+
+let LAST_WHEEL_ID=null;
+
+function openCocktailById(id){
+  const all = (BASE?.cocktails||[]).concat((USER?.cocktails||[]));
+  const c = all.find(x=>x.id===id);
+  if(!c) return;
+  if(typeof showCocktail==='function') return showCocktail(id);
+  if(typeof openCocktail==='function') return openCocktail(id);
+}
+
+function wireWheelResultLink(){
+  const wl = $("wheelResultLink");
+  if(wl && !wl._wired){
+    wl._wired=true;
+    wl.addEventListener("click",(e)=>{
+      e.preventDefault();
+      if(!LAST_WHEEL_ID) return;
+      if(typeof setView==="function") setView("cocktails");
+      openCocktailById(LAST_WHEEL_ID);
+    });
+  }
+}

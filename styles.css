@@ -68,3 +68,5 @@ details.acc>summary::-webkit-details-marker{display:none}
   .navbar{flex-wrap:wrap; gap:6px; padding:8px 8px}
   .navbtn{min-width:88px; padding:8px 10px; font-size:13px; border-radius:12px}
 }
+
+.link{color:var(--accent);text-decoration:underline;cursor:pointer}
