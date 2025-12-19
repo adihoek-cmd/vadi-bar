@@ -379,7 +379,10 @@ function openDlg(id){
   kv.push(mk.canMake?`<span class="badge ok">Can make</span>`:`<span class="badge missing">Missing: ${mk.missing.join(", ")}</span>`);
   $("dlg-kv").innerHTML=kv.join(" ");
 
-  $("dlg-ing").innerHTML=(c.ingredients||[]).map(i=>`<li>${i.item} — ${fmtAmt(i.amount_ml ?? i.amount)}</li>`).join("");
+  $("dlg-ing").innerHTML=(c.ingredients||[]).map(i=>{
+    if(typeof i==="string") return `<li>${escapeHtml(i)}</li>`;
+    return `<li>${escapeHtml(i.item||"")} — ${fmtAmt(i.amount_ml ?? i.amount)}</li>`;
+  }).join("");
   $("dlg-missing").innerHTML=mk.canMake?"":`<b>Missing:</b> ${mk.missing.join(", ")}`;
   $("dlg-steps").innerHTML=(c.steps||[]).map(s=>`<li>${s}</li>`).join("");
   $("dlg-garnish").innerHTML=`<b>Garnish:</b> ${c.garnish||"—"}`;
@@ -1248,8 +1251,18 @@ function parseLiquorTextFallback(text){
     recipeInstructions: steps
   };
 }
-function recipeToCocktail(recipe){
-  const name = recipe.name || "Imported cocktail";
+function recipeToCocktail(recipe, sourceUrl=""){
+  let name = recipe.name || "Imported cocktail";
+  // If Liquor.com returns an article-style title, fall back to URL slug
+  if(sourceUrl){
+    const cleanUrl = sourceUrl.split("?")[0];
+    const m = cleanUrl.match(/\/recipes\/([^\/]+)\/?$/i);
+    if(m){
+      const slug = m[1];
+      const slugName = slug.split("-").map(s=>s? (s[0].toUpperCase()+s.slice(1)):"").join(" ");
+      if(name.length>45 || /(if you|you['’]ll|love the|guide|how to)/i.test(name)) name = slugName;
+    }
+  }
   const ing = (recipe.recipeIngredient||[]).map(x=>x.toString());
   const inst = recipe.recipeInstructions || [];
   let steps = "";
@@ -1271,7 +1284,7 @@ function recipeToCocktail(recipe){
     name,
     glass,
     method,
-    ingredients: ing,
+    ingredients: ing.map(parseIngredientLine).filter(Boolean).map(x=>({item:x.item, amount_ml:x.amount_ml, requires:x.requires})),
     steps,
     liked: true,
     house: false,
@@ -1297,7 +1310,7 @@ async function importCocktailByLink(){
       recipe = parseLiquorTextFallback(page);
     }
     if(!recipe) throw new Error("No Recipe data found on that page.");
-    const c = recipeToCocktail(recipe);
+    const c = recipeToCocktail(recipe, url);
     c.source = url;
     IMPORTED_COCKTAIL = c;
 
