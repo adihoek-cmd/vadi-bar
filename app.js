@@ -2,7 +2,6 @@ let BASE=null;
 let USER={inventory:null,cocktails:[]};
 let CURRENT=null;
 let INV_CAT='spirit';
-let INV_KIND='__all__';
 
 const $=id=>document.getElementById(id);
 const normalize=s=>(s||"").toLowerCase();
@@ -144,7 +143,7 @@ function renderInventory(){
   const inv=mergedInventory();
   const items=(inv.items||[]).slice();
 
-  // Build category tabs
+  // Category tabs (top level)
   const cats=[
     {k:"spirit", label:"Spirits"},
     {k:"modifier", label:"Modifiers"},
@@ -152,43 +151,33 @@ function renderInventory(){
     {k:"pantry", label:"Pantry"},
   ];
   $("inv-cattabs").innerHTML = cats.map(c=>`<div class="chip" data-cat="${c.k}" aria-pressed="${INV_CAT===c.k}">${c.label}</div>`).join("");
-
   document.querySelectorAll("#inv-cattabs .chip").forEach(ch=>{
     ch.addEventListener("click",()=>{
       INV_CAT = ch.getAttribute("data-cat");
-      INV_KIND = "__all__";
       renderInventory();
     });
   });
 
-  // Kinds for selected category
-  const kinds = [...new Set(items.filter(it=>it.category===INV_CAT).map(it=>it.kind))].sort((a,b)=>a.localeCompare(b));
-  $("inv-kindtabs").innerHTML = [`<div class="chip" data-kind="__all__" aria-pressed="${INV_KIND==='__all__'}">All</div>`]
-    .concat(kinds.map(k=>`<div class="chip" data-kind="${k}" aria-pressed="${INV_KIND===k}">${k}</div>`))
-    .join("");
+  // Group by kind within selected category
+  const catItems = items.filter(it=>it.category===INV_CAT);
+  const byKind = new Map();
+  for(const it of catItems){
+    if(!byKind.has(it.kind)) byKind.set(it.kind, []);
+    byKind.get(it.kind).push(it);
+  }
+  const kinds = Array.from(byKind.keys()).sort((a,b)=>a.localeCompare(b));
 
-  document.querySelectorAll("#inv-kindtabs .chip").forEach(ch=>{
-    ch.addEventListener("click",()=>{
-      INV_KIND = ch.getAttribute("data-kind");
-      renderInventory();
-    });
-  });
+  // Restore open/closed state
+  const openKey = `vadi.inv.open.${INV_CAT}`;
+  const openKinds = new Set(JSON.parse(localStorage.getItem(openKey) || "[]"));
 
-  const filtered = items
-    .filter(it=>it.category===INV_CAT)
-    .filter(it=>INV_KIND==="__all__" ? true : it.kind===INV_KIND)
-    .sort((a,b)=>a.kind.localeCompare(b.kind) || a.label.localeCompare(b.label));
+  const accordions = kinds.map(kind=>{
+    const list = (byKind.get(kind)||[]).slice().sort((a,b)=>a.label.localeCompare(b.label));
+    const haveCount = list.filter(x=>x.have).length;
+    const isOpen = openKinds.has(kind);
 
-  // Render as "tree": Kind header then bottles under it
-  let out = "";
-  let currentKind = null;
-  for(const it of filtered){
-    if(INV_KIND==="__all__" && it.kind !== currentKind){
-      currentKind = it.kind;
-      out += `<div class="card"><div class="title">${currentKind}</div><div class="small">Toggle bottles in this group</div></div>`;
-    }
-    out += `
-      <div class="card">
+    const rows = list.map(it=>`
+      <div class="card" style="margin-top:10px">
         <div class="itemrow">
           <div>
             <div><b>${it.label}</b></div>
@@ -198,18 +187,84 @@ function renderInventory(){
             <input type="checkbox" ${it.have?"checked":""} data-cat="${it.category}" data-kind="${it.kind}" data-label="${it.label}">
           </div>
         </div>
-      </div>`;
-  }
-  $("invlist").innerHTML = out || `<div class="card"><div class="title">No items</div><div class="small">Add items below.</div></div>`;
+      </div>
+    `).join("");
 
-  document.querySelectorAll('#invlist input[type="checkbox"][data-cat]').forEach(cb=>{
-    cb.addEventListener("change",()=>{
-      setItemHave(cb.getAttribute("data-cat"), cb.getAttribute("data-kind"), cb.getAttribute("data-label"), cb.checked);
-      renderCocktails();
+    return `
+      <details class="acc" data-kind="${kind}" ${isOpen?"open":""}>
+        <summary>
+          <div>
+            <div class="title">${kind.toUpperCase()}</div>
+            <div class="accCount">${haveCount}/${list.length} available</div>
+          </div>
+          <div class="badge">${kind}</div>
+        </summary>
+        <div class="accBody">
+          ${rows || `<div class="small">No bottles yet.</div>`}
+          <div class="accAdd">
+            <div class="small"><b>Add a new bottle</b> (this kind)</div>
+            <div class="inlineRow" style="margin-top:8px">
+              <input type="text" class="inv-add-label" data-kind="${kind}" placeholder="Bottle name (brand / label)" style="flex:1;min-width:220px">
+              <button class="btn primary inv-add-btn" data-kind="${kind}">Add</button>
+              <button class="btn inv-scan-btn" data-kind="${kind}">Scan</button>
+            </div>
+            <div class="small inv-add-msg" data-kind="${kind}" style="margin-top:6px"></div>
+          </div>
+        </div>
+      </details>
+    `;
+  }).join("");
+
+  $("inv-accordions").innerHTML = accordions || `<div class="card"><div class="title">No items</div><div class="small">Add items below.</div></div>`;
+
+  // Save open/closed state
+  document.querySelectorAll("details.acc").forEach(det=>{
+    det.addEventListener("toggle",()=>{
+      const k = det.getAttribute("data-kind");
+      const set = new Set(JSON.parse(localStorage.getItem(openKey) || "[]"));
+      det.open ? set.add(k) : set.delete(k);
+      localStorage.setItem(openKey, JSON.stringify([...set]));
     });
   });
 
-  // Keep "Add new item" category synced with current tab for convenience
+  // Toggle handlers
+  document.querySelectorAll('#inv-accordions input[type="checkbox"][data-cat]').forEach(cb=>{
+    cb.addEventListener("change",()=>{
+      setItemHave(cb.getAttribute("data-cat"), cb.getAttribute("data-kind"), cb.getAttribute("data-label"), cb.checked);
+      renderCocktails();
+      // refresh counts
+      renderInventory();
+    });
+  });
+
+  // Per-kind add handlers
+  document.querySelectorAll(".inv-add-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const kind = btn.getAttribute("data-kind");
+      const input = document.querySelector(`.inv-add-label[data-kind="${CSS.escape(kind)}"]`);
+      const msg = document.querySelector(`.inv-add-msg[data-kind="${CSS.escape(kind)}"]`);
+      const label = (input?.value||"").trim();
+      if(!label){ msg.textContent="Enter a bottle name."; return; }
+      ensureUserInv();
+      USER.inventory.items.push({category:INV_CAT, kind, label, have:true});
+      saveUser();
+      input.value="";
+      msg.textContent=`Added: ${label}`;
+      renderInventory(); renderCocktails();
+    });
+  });
+
+  // Per-kind scan handlers
+  document.querySelectorAll(".inv-scan-btn").forEach(btn=>{
+    btn.addEventListener("click",async()=>{
+      const kind = btn.getAttribute("data-kind");
+      const input = document.querySelector(`.inv-add-label[data-kind="${CSS.escape(kind)}"]`);
+      const msg = document.querySelector(`.inv-add-msg[data-kind="${CSS.escape(kind)}"]`);
+      await scanBarcodeToInput(input, msg);
+    });
+  });
+
+  // Keep the global "Add new item" form category synced (still exists below)
   const catSel = $("add-cat");
   if(catSel && catSel.value !== INV_CAT) catSel.value = INV_CAT;
 }
@@ -371,7 +426,7 @@ function addInventoryItem(){
   const cat=$("add-cat").value;
   const kind=$("add-kind").value.trim();
   const label=$("add-label").value.trim() || kind;
-  const msg=$("add-msg");
+  const msg = targetMsg || $("add-msg");
   if(!kind){ msg.textContent="Kind is required (must match cocktails)."; return; }
   ensureUserInv();
   USER.inventory.items.push({category:cat, kind, label, have:true});
@@ -381,8 +436,8 @@ function addInventoryItem(){
   renderInventory(); renderCocktails();
 }
 
-async function scanBarcode(){
-  const msg=$("add-msg");
+async function scanBarcodeToInput(targetInput, targetMsg){
+  const msg = targetMsg || $("add-msg");
   msg.textContent="";
   if(!("BarcodeDetector" in window)){ msg.textContent="Barcode scanning not supported on this browser/device."; return; }
   const detector=new BarcodeDetector({formats:["ean_13","ean_8","code_128","qr_code","upc_a","upc_e"]});
@@ -411,7 +466,7 @@ async function scanBarcode(){
           const codes=await detector.detect(bitmap);
           if(codes && codes.length){
             const code=codes[0].rawValue||"";
-            $("add-label").value=code;
+            if(targetInput){ targetInput.value=code; } else { $("add-label").value=code; }
             msg.textContent=`Scanned: ${code} (edit to actual bottle name)`;
             await close(); return;
           }
@@ -424,6 +479,11 @@ async function scanBarcode(){
     msg.textContent="Could not access camera. Check permissions.";
     await close();
   }
+}
+
+
+async function scanBarcode(){
+  return scanBarcodeToInput($("add-label"), $("add-msg"));
 }
 
 function exportJSON(){

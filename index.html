@@ -4,7 +4,7 @@
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0b0b0b">
 <link rel="icon" href="./icons/icon-192.png"><link rel="stylesheet" href="./styles.css">
 </head><body>
-<header><h1>The Vadi Bar <span style="color:#b7b7b7;font-size:12px">v4.3</span></h1><div class="sub">Per-bottle inventory · Add items by type (kind) · Offline-first</div>
+<header><h1>The Vadi Bar <span style="color:#b7b7b7;font-size:12px">v4.4</span></h1><div class="sub">Per-bottle inventory · Add items by type (kind) · Offline-first</div>
 <div class="controls" id="controls">
 <input id="q" type="search" placeholder="Search cocktails..." autocomplete="off"/>
 <div class="chips" role="group" aria-label="Filters">
@@ -19,7 +19,7 @@
 <div id="view-inventory" style="display:none">
 <div class="sectionTitle">Inventory (each bottle)</div>
 <div class="chips" id="inv-cattabs" style="margin-top:10px"></div>
-<div class="chips" id="inv-kindtabs" style="margin-top:8px; overflow:auto; white-space:nowrap"></div>
+<div id="inv-accordions" style="margin-top:10px"></div>
 <div class="small">Availability uses the <b>kind</b> (e.g., Gin). If any bottle of that kind is ON, it counts.</div>
 <div class="list" id="invlist"></div>
 <div style="margin-top:14px" class="card">
