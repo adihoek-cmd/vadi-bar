@@ -797,19 +797,17 @@
     {
       "id": "hot-toddy",
       "name": "Hot Toddy",
-      "liked": false,
-      "house": false,
       "glass": "mug",
       "method": "build",
-      "source": "Liquor.com",
-      "source_url": "https://www.liquor.com/recipes/hot-toddy/",
+      "liked": false,
+      "house": false,
       "ingredients": [
         {
           "item": "Whiskey (bourbon/rye/Irish/scotch)",
           "amount_ml": 59
         },
         {
-          "item": "Lemon juice",
+          "item": "Lemon juice (fresh)",
           "amount_ml": 7
         },
         {
@@ -821,25 +819,35 @@
           "item": "Boiling water",
           "amount_ml": null,
           "amount_note": "to fill"
+        },
+        {
+          "item": "Cloves",
+          "amount_ml": null,
+          "amount_note": "4"
+        },
+        {
+          "item": "Lemon peel or wheel",
+          "amount_ml": null,
+          "amount_note": "1"
         }
       ],
-      "garnish": "Lemon peel or wheel studded with cloves",
       "steps": [
-        "Warm a mug with boiling water, then discard the water.",
-        "Add sugar and about half a mug of boiling water; stir to dissolve.",
-        "Add lemon juice and whiskey; stir.",
-        "Garnish with a clove-studded lemon peel/wheel."
-      ]
+        "Warm a mug with boiling water, then discard.",
+        "Stud the lemon peel/wheel with cloves.",
+        "Add sugar to the mug and fill about halfway with fresh boiling water; stir to dissolve.",
+        "Add the clove-studded lemon and the whiskey; stir.",
+        "Serve hot."
+      ],
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/hot-toddy/"
     },
     {
       "id": "espresso-martini",
       "name": "Espresso Martini",
+      "glass": "cocktail",
+      "method": "shake",
       "liked": true,
       "house": false,
-      "glass": "martini",
-      "method": "shake",
-      "source": "Liquor.com",
-      "source_url": "https://www.liquor.com/recipes/espresso-martini-2/",
       "ingredients": [
         {
           "item": "Vodka",
@@ -850,21 +858,27 @@
           "amount_ml": 15
         },
         {
-          "item": "Fresh espresso",
+          "item": "Espresso (fresh, cooled)",
           "amount_ml": 30
         },
         {
           "item": "Simple syrup",
           "amount_ml": 7
+        },
+        {
+          "item": "Coffee beans",
+          "amount_ml": null,
+          "amount_note": "garnish (3)"
         }
       ],
-      "garnish": "3 coffee beans",
       "steps": [
         "Add vodka, coffee liqueur, espresso and simple syrup to a shaker with ice.",
-        "Shake hard until very cold and frothy.",
-        "Double strain into a chilled cocktail (martini) glass.",
+        "Shake hard until very cold and foamy.",
+        "Double-strain into a chilled cocktail glass.",
         "Garnish with 3 coffee beans."
-      ]
+      ],
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/espresso-martini-2/"
     }
   ]
 }
