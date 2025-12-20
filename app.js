@@ -159,6 +159,7 @@ function renderInventory(){
     ch.addEventListener("click",()=>{
       INV_CAT = ch.getAttribute("data-cat");
       renderInventory();
+  initWebSuggest();
     });
   });
 
@@ -173,6 +174,7 @@ function renderInventory(){
       ch.addEventListener("click",()=>{
         INV_MISSING_ONLY = ch.getAttribute("data-miss")==="1";
         renderInventory();
+  initWebSuggest();
       });
     });
     $("btn-copy-missing").addEventListener("click",async()=>{
@@ -292,7 +294,8 @@ function renderInventory(){
   initLinkImporter();
   initCocktailAdd();
   initWheel();
-      renderInventory(); // refresh counts
+      renderInventory();
+  initWebSuggest(); // refresh counts
     });
   });
 
@@ -322,7 +325,8 @@ function renderInventory(){
       saveUser();
       input.value="";
       msg.textContent=`Added: ${label}`;
-      renderInventory(); renderCocktails();
+      renderInventory();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -453,6 +457,7 @@ function setView(which){
   initCocktailAdd();
   initWheel();
   if(which==="inventory") renderInventory();
+  initWebSuggest();
 }
 
 function parseIngredients(text){
@@ -521,7 +526,8 @@ function addInventoryItem(){
   saveUser();
   $("add-kind").value=""; $("add-label").value="";
   msg.textContent=`Added: ${label}`;
-  renderInventory(); renderCocktails();
+  renderInventory();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -612,7 +618,8 @@ function importJSON(file){
       USER.cocktails=payload.user_cocktails || USER.cocktails;
       migrateInventoryIfNeeded();
       saveUser();
-      renderInventory(); renderCocktails();
+      renderInventory();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -682,7 +689,8 @@ $("btn-reset-inv").addEventListener("click",()=>{
   if(!confirm("This will clear ONLY this device's inventory toggles/items (recipes stay). Continue?")) return;
   localStorage.removeItem("vadi.user.inventory");
   USER.inventory=null;
-  renderInventory(); renderCocktails();
+  renderInventory();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -697,7 +705,8 @@ $("btn-restore-inv").addEventListener("click",()=>{
   if(!confirm("This will overwrite this device's inventory list with the default bottles (and set them ON). Continue?")) return;
   USER.inventory = {items: BASE.inventory.items.map(it=>({category:it.category, kind:it.kind, label:it.label, have:true}))};
   saveUser();
-  renderInventory(); renderCocktails();
+  renderInventory();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -1309,5 +1318,253 @@ function wireWheelResultLink(){
       if(typeof setView==="function") setView("cocktails");
       openCocktailById(LAST_WHEEL_ID);
     });
+  }
+}
+
+// --- Web cocktail suggestions (TheCocktailDB + Liquor.com search) ---
+function normalizeKindForCocktailDB(kind){
+  const k=(kind||"").toLowerCase();
+  if(k.includes("bourbon")||k.includes("rye")||k.includes("scotch")||k.includes("whiskey")) return "Whiskey";
+  if(k.includes("gin")) return "Gin";
+  if(k.includes("vodka")) return "Vodka";
+  if(k.includes("tequila")) return "Tequila";
+  if(k.includes("mezcal")) return "Mezcal";
+  if(k.includes("rum")) return "Rum";
+  if(k.includes("brandy")||k.includes("cognac")) return "Brandy";
+  if(k.includes("vermouth")) return "Vermouth";
+  if(k.includes("campari")) return "Campari";
+  if(k.includes("aperol")) return "Aperol";
+  if(k.includes("chartreuse")) return "Chartreuse";
+  return kind || "Gin";
+}
+
+async function fetchCocktailDBByIngredient(ingredient){
+  const url = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=" + encodeURIComponent(ingredient);
+  const resp = await fetch(url, {cache:"no-cache"});
+  if(!resp.ok) throw new Error("Fetch failed");
+  const j = await resp.json();
+  return (j && j.drinks) ? j.drinks : [];
+}
+
+function openLiquorSearchForKind(kind){
+  const q = "site:liquor.com " + kind + " cocktail recipe";
+  const url = "https://www.google.com/search?q=" + encodeURIComponent(q);
+  window.open(url, "_blank", "noopener");
+}
+
+function openCocktailDBDrink(id){
+  const url = "https://www.thecocktaildb.com/drink/" + encodeURIComponent(id);
+  window.open(url, "_blank", "noopener");
+}
+
+function renderWebSuggestResults(drinks, baseKind){
+  const box = $("web-suggest-results");
+  if(!box) return;
+  if(!drinks.length){
+    box.innerHTML = "";
+    $("web-suggest-status").textContent = `No results found for ${baseKind}. Try another spirit.`;
+    return;
+  }
+  box.innerHTML = drinks.slice(0, 24).map(d=>{
+    const img = d.strDrinkThumb || "";
+    const name = d.strDrink || "Cocktail";
+    const id = d.idDrink || "";
+    return `<div class="webCard" data-id="${id}">
+      <img class="webThumb" src="${img}" alt="">
+      <div class="webName">${name}</div>
+      <div class="webMeta">Ingredient: ${baseKind}</div>
+      <div class="row" style="margin-top:8px;gap:8px;flex-wrap:wrap">
+        <button class="btn" data-act="open">Open</button>
+        <button class="btn primary" data-act="import">Import</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  box.querySelectorAll(".webCard").forEach(card=>{
+    card.querySelectorAll("button[data-act]").forEach(btn=>{
+      btn.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        const id = card.getAttribute("data-id");
+        const act = btn.getAttribute("data-act");
+        if(!id) return;
+        if(act==="open") openCocktailDBDrink(id);
+        if(act==="import") importCocktailDBDrink(id);
+      });
+    });
+  });
+}
+
+async function runWebSuggest(){
+  const sel = $("web-spirit");
+  const kind = sel ? sel.value : "";
+  const base = normalizeKindForCocktailDB(kind);
+  const canMakeOnly = $("web-canmake") ? $("web-canmake").checked : false;
+  const status = $("web-suggest-status");
+  if(status) status.textContent = "Searching…";
+  try{
+    const drinks = await fetchCocktailDBByIngredient(base);
+    if(!canMakeOnly){
+      if(status) status.textContent = `Found ${drinks.length} ideas for ${base} (from TheCocktailDB).`;
+      renderWebSuggestResults(drinks, base);
+      return;
+    }
+    const tokens = buildInventoryTokenSet();
+    const subset = drinks.slice(0, 12);
+    if(status) status.textContent = `Checking what you can make now (first ${subset.length})…`;
+    const checks = await Promise.all(subset.map(async d=>{
+      try{
+        const full = await fetchCocktailDBDetails(d.idDrink);
+        if(!full) return null;
+        return drinkCanMakeNow(full, tokens) ? d : null;
+      }catch(e){ return null; }
+    }));
+    const ok = checks.filter(Boolean);
+    if(status) status.textContent = ok.length ? `You can make ${ok.length} of the first ${subset.length} ${base} ideas.` : `No matches (checked ${subset.length}). Try another spirit.`;
+    renderWebSuggestResults(ok, base);
+  }catch(e){
+    if(status) status.textContent = "Could not fetch suggestions (network/CORS). Use “Open Liquor.com” instead.";
+    const box = $("web-suggest-results");
+    if(box) box.innerHTML = "";
+  }
+}
+
+function initWebSuggest(){
+  const sel = $("web-spirit");
+  if(!sel) return;
+  const inv = mergedInventory();
+  const haveKinds = Array.from(new Set((inv.items||[]).filter(i=>i.have).map(i=>i.kind))).filter(Boolean);
+  haveKinds.sort((a,b)=>a.localeCompare(b));
+  sel.innerHTML = haveKinds.map(k=>`<option value="${k}">${k}</option>`).join("");
+  const btn = $("btn-web-suggest");
+  const btnL = $("btn-web-open-liquor");
+  if(btn && !btn._wired){
+    btn._wired=true;
+    btn.addEventListener("click", runWebSuggest);
+  }
+  if(btnL && !btnL._wired){
+    btnL._wired=true;
+    btnL.addEventListener("click", ()=>openLiquorSearchForKind(sel.value||"cocktail"));
+  }
+}
+
+async function fetchCocktailDBDetails(id){
+  const url = "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=" + encodeURIComponent(id);
+  const resp = await fetch(url, {cache:"no-cache"});
+  if(!resp.ok) throw new Error("Fetch failed");
+  const j = await resp.json();
+  return (j && j.drinks && j.drinks[0]) ? j.drinks[0] : null;
+}
+
+function extractDrinkIngredients(d){
+  const out=[];
+  for(let i=1;i<=15;i++){
+    const ing = d["strIngredient"+i];
+    const meas = d["strMeasure"+i];
+    if(ing && ing.trim()){
+      out.push({ingredient: ing.trim(), measure: (meas||"").trim()});
+    }
+  }
+  return out;
+}
+
+function isIgnoredPantryItem(name){
+  const n=(name||"").toLowerCase();
+  const ignore = ["ice","water","soda water","sparkling water","club soda","salt",
+                  "sugar","brown sugar","demerara","espresso","coffee","coffee beans"];
+  return ignore.some(x=>n===x || n.includes(x));
+}
+
+function buildInventoryTokenSet(){
+  const inv = mergedInventory();
+  const have = (inv.items||[]).filter(i=>i.have);
+  const tokens = new Set();
+  have.forEach(i=>{
+    (i.kind||"").toLowerCase().split(/[\s\/\-,()]+/).filter(Boolean).forEach(t=>tokens.add(t));
+    (i.label||"").toLowerCase().split(/[\s\/\-,()]+/).filter(Boolean).forEach(t=>tokens.add(t));
+  });
+  ["whiskey","bourbon","rye","scotch","gin","vodka","tequila","mezcal","rum","vermouth","campari","aperol","chartreuse","amaro","brandy","cognac","kahlua","coffee","liqueur"].forEach(t=>tokens.add(t));
+  return tokens;
+}
+
+function ingredientMatchesInventory(ing, tokens){
+  const n=(ing||"").toLowerCase();
+  if(isIgnoredPantryItem(n)) return true;
+
+  const rules = [
+    {key:"bourbon", any:["bourbon","whiskey"]},
+    {key:"rye", any:["rye","whiskey"]},
+    {key:"scotch", any:["scotch","whiskey"]},
+    {key:"whiskey", any:["whiskey","bourbon","rye","scotch"]},
+    {key:"gin", any:["gin"]},
+    {key:"vodka", any:["vodka"]},
+    {key:"tequila", any:["tequila"]},
+    {key:"mezcal", any:["mezcal"]},
+    {key:"rum", any:["rum"]},
+    {key:"vermouth", any:["vermouth"]},
+    {key:"campari", any:["campari"]},
+    {key:"aperol", any:["aperol"]},
+    {key:"chartreuse", any:["chartreuse"]},
+    {key:"coffee liqueur", any:["kahlua","coffee","liqueur"]},
+    {key:"kahlua", any:["kahlua","coffee"]},
+  ];
+  for(const r of rules){
+    if(n.includes(r.key)) return r.any.some(t=>tokens.has(t));
+  }
+  // fallback: match any significant token
+  return Array.from(tokens).some(t=>t.length>=4 && n.includes(t));
+}
+
+function drinkCanMakeNow(drink, tokens){
+  const ings = extractDrinkIngredients(drink);
+  // treat citrus as pantry? (optional) - keep strict-ish: do NOT auto-true for lemon/lime
+  return ings.every(x=>ingredientMatchesInventory(x.ingredient, tokens));
+}
+
+function inferMethodFromInstructions(text){
+  const t=(text||"").toLowerCase();
+  if(t.includes("shake")) return "shake";
+  if(t.includes("stir")) return "stir";
+  if(t.includes("muddle")) return "muddle";
+  return "build";
+}
+
+async function importCocktailDBDrink(id){
+  const status = $("web-suggest-status");
+  if(status) status.textContent = "Importing…";
+  try{
+    const d = await fetchCocktailDBDetails(id);
+    if(!d) throw new Error("No details");
+    const ing = extractDrinkIngredients(d);
+    const ingredients = ing.map(x=>({ item: (`${x.measure} ${x.ingredient}`).trim(), amount_ml: null }));
+    const method = inferMethodFromInstructions(d.strInstructions);
+    const g=(d.strGlass||"").toLowerCase();
+    const glass = g.includes("mug") ? "mug" :
+                  (g.includes("martini")||g.includes("cocktail")) ? "martini" :
+                  (g.includes("highball")||g.includes("collins")) ? "highball" :
+                  (g.includes("old-fashioned")||g.includes("rocks")) ? "rocks" : "rocks";
+    const c = {
+      id: "db-" + (d.idDrink || Math.random().toString(16).slice(2)),
+      name: d.strDrink || "Imported cocktail",
+      liked: true,
+      house: false,
+      glass,
+      method,
+      source: "TheCocktailDB",
+      source_url: "https://www.thecocktaildb.com/drink/" + encodeURIComponent(d.idDrink||""),
+      ingredients,
+      garnish: "",
+      steps: (d.strInstructions||"").split(/\n/).map(s=>s.trim()).filter(Boolean)
+    };
+    USER.cocktails = USER.cocktails || [];
+    if(USER.cocktails.some(x=>(x.name||"").toLowerCase()===c.name.toLowerCase())){
+      if(status) status.textContent = `Already imported: ${c.name}`;
+      return;
+    }
+    USER.cocktails.unshift(c);
+    saveUser();
+    if(status) status.textContent = `Imported ✔ ${c.name}`;
+    setView("cocktails");
+  }catch(e){
+    if(status) status.textContent = "Import failed.";
   }
 }

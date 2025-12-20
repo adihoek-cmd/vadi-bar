@@ -70,3 +70,9 @@ details.acc>summary::-webkit-details-marker{display:none}
 }
 
 .link{color:var(--accent);text-decoration:underline;cursor:pointer}
+
+.webCard{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(255,255,255,0.02);cursor:pointer}
+.webCard:hover{background:rgba(255,255,255,0.04)}
+.webThumb{width:100%;aspect-ratio:1/1;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:#111}
+.webName{margin-top:8px;font-weight:700;font-size:14px;line-height:1.2}
+.webMeta{margin-top:4px;font-size:12px;opacity:.85}

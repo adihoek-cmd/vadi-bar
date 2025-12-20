@@ -793,6 +793,78 @@
       ],
       "source": "Liquor.com",
       "source_url": "https://www.liquor.com/recipes/gold-rush/"
+    },
+    {
+      "id": "hot-toddy",
+      "name": "Hot Toddy",
+      "liked": false,
+      "house": false,
+      "glass": "mug",
+      "method": "build",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/hot-toddy/",
+      "ingredients": [
+        {
+          "item": "Whiskey (bourbon/rye/Irish/scotch)",
+          "amount_ml": 59
+        },
+        {
+          "item": "Lemon juice",
+          "amount_ml": 7
+        },
+        {
+          "item": "Demerara or brown sugar",
+          "amount_ml": null,
+          "amount_note": "2 tsp"
+        },
+        {
+          "item": "Boiling water",
+          "amount_ml": null,
+          "amount_note": "to fill"
+        }
+      ],
+      "garnish": "Lemon peel or wheel studded with cloves",
+      "steps": [
+        "Warm a mug with boiling water, then discard the water.",
+        "Add sugar and about half a mug of boiling water; stir to dissolve.",
+        "Add lemon juice and whiskey; stir.",
+        "Garnish with a clove-studded lemon peel/wheel."
+      ]
+    },
+    {
+      "id": "espresso-martini",
+      "name": "Espresso Martini",
+      "liked": true,
+      "house": false,
+      "glass": "martini",
+      "method": "shake",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/espresso-martini-2/",
+      "ingredients": [
+        {
+          "item": "Vodka",
+          "amount_ml": 59
+        },
+        {
+          "item": "Coffee liqueur",
+          "amount_ml": 15
+        },
+        {
+          "item": "Fresh espresso",
+          "amount_ml": 30
+        },
+        {
+          "item": "Simple syrup",
+          "amount_ml": 7
+        }
+      ],
+      "garnish": "3 coffee beans",
+      "steps": [
+        "Add vodka, coffee liqueur, espresso and simple syrup to a shaker with ice.",
+        "Shake hard until very cold and frothy.",
+        "Double strain into a chilled cocktail (martini) glass.",
+        "Garnish with 3 coffee beans."
+      ]
     }
   ]
 }
