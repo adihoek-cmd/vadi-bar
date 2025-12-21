@@ -159,7 +159,7 @@ function renderInventory(){
     ch.addEventListener("click",()=>{
       INV_CAT = ch.getAttribute("data-cat");
       renderInventory();
-  initWebSuggestV74();
+  initWebSuggest();
     });
   });
 
@@ -174,7 +174,7 @@ function renderInventory(){
       ch.addEventListener("click",()=>{
         INV_MISSING_ONLY = ch.getAttribute("data-miss")==="1";
         renderInventory();
-  initWebSuggestV74();
+  initWebSuggest();
       });
     });
     $("btn-copy-missing").addEventListener("click",async()=>{
@@ -295,7 +295,7 @@ function renderInventory(){
   initCocktailAdd();
   initWheel();
       renderInventory();
-  initWebSuggestV74(); // refresh counts
+  initWebSuggest(); // refresh counts
     });
   });
 
@@ -326,7 +326,7 @@ function renderInventory(){
       input.value="";
       msg.textContent=`Added: ${label}`;
       renderInventory();
-  initWebSuggestV74(); renderCocktails();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -457,7 +457,7 @@ function setView(which){
   initCocktailAdd();
   initWheel();
   if(which==="inventory") renderInventory();
-  initWebSuggestV74();
+  initWebSuggest();
 }
 
 function parseIngredients(text){
@@ -527,7 +527,7 @@ function addInventoryItem(){
   $("add-kind").value=""; $("add-label").value="";
   msg.textContent=`Added: ${label}`;
   renderInventory();
-  initWebSuggestV74(); renderCocktails();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -619,7 +619,7 @@ function importJSON(file){
       migrateInventoryIfNeeded();
       saveUser();
       renderInventory();
-  initWebSuggestV74(); renderCocktails();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -690,7 +690,7 @@ $("btn-reset-inv").addEventListener("click",()=>{
   localStorage.removeItem("vadi.user.inventory");
   USER.inventory=null;
   renderInventory();
-  initWebSuggestV74(); renderCocktails();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -706,7 +706,7 @@ $("btn-restore-inv").addEventListener("click",()=>{
   USER.inventory = {items: BASE.inventory.items.map(it=>({category:it.category, kind:it.kind, label:it.label, have:true}))};
   saveUser();
   renderInventory();
-  initWebSuggestV74(); renderCocktails();
+  initWebSuggest(); renderCocktails();
   initLinkImporter();
   initCocktailAdd();
   initWheel();
@@ -1419,7 +1419,7 @@ function initWebSuggest(){
   }
 }
 
-// --- V7.4 Web Suggestions ---
+/* ===== V7.5 Web Suggestions Override (robust + import + can-make) ===== */
 async function fetchCocktailDBDetails(id){
   const url = "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=" + encodeURIComponent(id);
   const resp = await fetch(url, {cache:"no-cache"});
@@ -1440,41 +1440,6 @@ function extractDrinkIngredients(d){
   return out;
 }
 
-function normalizeKindForCocktailDB(kind){
-  const k=(kind||"").toLowerCase();
-  if(k.includes("bourbon")||k.includes("rye")||k.includes("scotch")||k.includes("whiskey")) return "Whiskey";
-  if(k.includes("gin")) return "Gin";
-  if(k.includes("vodka")) return "Vodka";
-  if(k.includes("tequila")) return "Tequila";
-  if(k.includes("mezcal")) return "Mezcal";
-  if(k.includes("rum")) return "Rum";
-  if(k.includes("brandy")||k.includes("cognac")) return "Brandy";
-  if(k.includes("vermouth")) return "Vermouth";
-  if(k.includes("campari")) return "Campari";
-  if(k.includes("aperol")) return "Aperol";
-  if(k.includes("chartreuse")) return "Chartreuse";
-  return kind || "Gin";
-}
-
-async function fetchCocktailDBByIngredient(ingredient){
-  const url = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=" + encodeURIComponent(ingredient);
-  const resp = await fetch(url, {cache:"no-cache"});
-  if(!resp.ok) throw new Error("Fetch failed");
-  const j = await resp.json();
-  return (j && j.drinks) ? j.drinks : [];
-}
-
-function openCocktailDBDrink(id){
-  const url = "https://www.thecocktaildb.com/drink/" + encodeURIComponent(id);
-  window.open(url, "_blank", "noopener");
-}
-
-function openLiquorSearchForKind(kind){
-  const q = "site:liquor.com " + kind + " cocktail recipe";
-  const url = "https://www.google.com/search?q=" + encodeURIComponent(q);
-  window.open(url, "_blank", "noopener");
-}
-
 function isIgnoredPantryItem(name){
   const n=(name||"").toLowerCase();
   const ignore = ["ice","water","soda water","sparkling water","club soda","salt","sugar","brown sugar","demerara",
@@ -1485,7 +1450,7 @@ function isIgnoredPantryItem(name){
 
 function buildInventoryTokenSet(){
   const inv = mergedInventory();
-  const items = (inv.items||[]);
+  const items = inv.items || [];
   const tokens = new Set();
   items.forEach(i=>{
     if(i.have===false) return; // treat unset as available-ish
@@ -1582,7 +1547,7 @@ async function importCocktailDBDrink(id){
   }
 }
 
-function renderWebSuggestResultsV74(drinks, baseKind){
+function renderWebSuggestResults(drinks, baseKind){
   const box = $("web-suggest-results");
   if(!box) return;
   if(!drinks.length){
@@ -1619,7 +1584,7 @@ function renderWebSuggestResultsV74(drinks, baseKind){
   });
 }
 
-async function runWebSuggestV74(){
+async function runWebSuggest(){
   const sel = $("web-spirit");
   const kind = sel ? sel.value : "";
   const base = normalizeKindForCocktailDB(kind);
@@ -1630,7 +1595,7 @@ async function runWebSuggestV74(){
     const drinks = await fetchCocktailDBByIngredient(base);
     if(!canMakeOnly){
       if(status) status.textContent = `Found ${drinks.length} ideas for ${base} (from TheCocktailDB).`;
-      renderWebSuggestResultsV74(drinks, base);
+      renderWebSuggestResults(drinks, base);
       return;
     }
     const tokens = buildInventoryTokenSet();
@@ -1645,7 +1610,7 @@ async function runWebSuggestV74(){
     }));
     const ok = checks.filter(Boolean);
     if(status) status.textContent = ok.length ? `You can make ${ok.length} of the first ${subset.length} ${base} ideas.` : `No matches (checked ${subset.length}). Try another spirit.`;
-    renderWebSuggestResultsV74(ok, base);
+    renderWebSuggestResults(ok, base);
   }catch(e){
     if(status) status.textContent = "Could not fetch suggestions. Use “Open Liquor.com” instead.";
     const box = $("web-suggest-results");
@@ -1653,7 +1618,7 @@ async function runWebSuggestV74(){
   }
 }
 
-function initWebSuggestV74(){
+function initWebSuggest(){
   const sel = $("web-spirit");
   if(!sel) return;
   const inv = mergedInventory();
@@ -1665,12 +1630,12 @@ function initWebSuggestV74(){
   sel.innerHTML = kinds.map(k=>`<option value="${k}">${k}</option>`).join("");
   const btn = $("btn-web-suggest");
   const btnL = $("btn-web-open-liquor");
-  if(btn && !btn._wired_v74){
-    btn._wired_v74=true;
-    btn.addEventListener("click", runWebSuggestV74);
+  if(btn && !btn._wired_v75){
+    btn._wired_v75=true;
+    btn.addEventListener("click", runWebSuggest);
   }
-  if(btnL && !btnL._wired_v74){
-    btnL._wired_v74=true;
+  if(btnL && !btnL._wired_v75){
+    btnL._wired_v75=true;
     btnL.addEventListener("click", ()=>openLiquorSearchForKind(sel.value||"cocktail"));
   }
 }
