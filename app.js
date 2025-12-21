@@ -518,6 +518,30 @@ function clearRecipeForm(){
 function getAllKinds(){
   ensureUserInv();
   const set = new Set();
+  // Fallback list so the Kind dropdown is never empty.
+  // These are the "kinds" used for cocktail ingredient matching.
+  const FALLBACK_KINDS = [
+    "Gin",
+    "Vodka",
+    "Bourbon",
+    "Rye whiskey",
+    "Blended Scotch",
+    "Peated Scotch",
+    "Single Malt Scotch",
+    "Irish whiskey",
+    "Cognac/Brandy",
+    "Rum",
+    "Tequila",
+    "Mezcal",
+    "Vermouth (Sweet)",
+    "Vermouth (Dry)",
+    "Aperitivo",
+    "Amaro",
+    "Liqueur",
+    "Bitters",
+    "Syrup",
+    "Other"
+  ];
   // From inventory
   (USER.inventory.items||[]).forEach(i=>{ if(i?.kind) set.add(i.kind.trim()); });
   // From cocktails (ingredients kinds)
@@ -526,6 +550,10 @@ function getAllKinds(){
   });
   // User-defined kinds list (if any)
   (USER.inventory.kinds||[]).forEach(k=>{ if(k) set.add(String(k).trim()); });
+  // If no kinds were discovered (e.g., first load or data not yet initialized), use fallback.
+  if(set.size === 0){
+    FALLBACK_KINDS.forEach(k=>set.add(k));
+  }
   return Array.from(set).filter(Boolean).sort((a,b)=>a.localeCompare(b));
 }
 
@@ -549,6 +577,8 @@ function initKindDropdown(){
   // Restore previous selection if possible
   if(prev && kinds.includes(prev)) sel.value = prev;
   else if(kinds.length) sel.value = kinds[0];
+  // If still blank for any reason, default to custom so the user can proceed.
+  if(!sel.value) sel.value = "__custom__";
   custom.style.display = (sel.value==="__custom__") ? "block" : "none";
   if(sel.value!=="__custom__") custom.value = "";
   sel.onchange = () => {
