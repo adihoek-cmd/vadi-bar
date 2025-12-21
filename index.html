@@ -4,7 +4,7 @@
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0b0b0b">
 <link rel="icon" href="./icons/icon-192.png"><link rel="stylesheet" href="./styles.css">
 </head><body>
-<header><h1>The Vadi Bar <span style="color:#b7b7b7;font-size:12px">V7.5</span></h1><div class="sub">Per-bottle inventory · Add items by type (kind) · Offline-first</div>
+<header><h1>The Vadi Bar <span style="color:#b7b7b7;font-size:12px">V7.6</span></h1><div class="sub">Per-bottle inventory · Add items by type (kind) · Offline-first</div>
 <div class="controls" id="controls">
 <input id="q" type="search" placeholder="Search cocktails..." autocomplete="off"/>
 <div class="chips" role="group" aria-label="Filters">
@@ -60,7 +60,12 @@
 <div class="row2" style="margin-top:8px">
 <div><label class="mini">Category</label>
 <select id="add-cat"><option value="spirit">Spirit</option><option value="modifier">Modifier</option><option value="syrup">Syrup</option><option value="pantry">Pantry</option></select></div>
-<div><label class="mini">Kind (used by cocktails)</label><input id="add-kind" type="text" placeholder="e.g., Gin / Sweet vermouth / Angostura bitters"></div>
+<div>
+  <label class="mini">Kind (used by cocktails)</label>
+  <select id="add-kind-select"></select>
+  <input id="add-kind-custom" type="text" placeholder="Type a new kind..." style="display:none;margin-top:8px">
+  <div class="small" style="margin-top:6px;opacity:.85">Tip: use broad kinds (e.g., Rum, Gin, Sweet vermouth).</div>
+</div>
 </div>
 <div style="margin-top:10px"><label class="mini">Label (your bottle name)</label><input id="add-label" type="text" placeholder="e.g., Tanqueray No. Ten / Carpano Antica"></div>
 <div class="btnrow"><button class="btn primary" id="btn-add-item">Add</button><button class="btn" id="btn-scan">Scan barcode</button></div>

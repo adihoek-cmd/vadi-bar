@@ -456,7 +456,7 @@ function setView(which){
   initLinkImporter(); initLinkImporter(); }
   initCocktailAdd();
   initWheel();
-  if(which==="inventory") renderInventory();
+  if(which==="inventory") { renderInventory(); initKindPicker(); }
   initWebSuggest();
 }
 
@@ -515,16 +515,77 @@ function clearRecipeForm(){
   $("r-msg").textContent="";
 }
 
-function addInventoryItem(){
+function getAllKinds(){
+  ensureUserInv();
+  const set = new Set();
+  // From inventory
+  (USER.inventory.items||[]).forEach(i=>{ if(i?.kind) set.add(i.kind.trim()); });
+  // From cocktails (ingredients kinds)
+  (COCKTAILS||[]).forEach(c=>{
+    (c.ingredients||[]).forEach(ing=>{ if(ing?.kind) set.add(String(ing.kind).trim()); });
+  });
+  // User-defined kinds list (if any)
+  (USER.inventory.kinds||[]).forEach(k=>{ if(k) set.add(String(k).trim()); });
+  return Array.from(set).filter(Boolean).sort((a,b)=>a.localeCompare(b));
+}
+
+function initKindDropdown(){
+  const sel = $("add-kind-select");
+  const custom = $("add-kind-custom");
+  if(!sel || !custom) return;
+  const prev = sel.value;
+  const kinds = getAllKinds();
+  sel.innerHTML = "";
+  kinds.forEach(k=>{
+    const opt = document.createElement("option");
+    opt.value = k;
+    opt.textContent = k;
+    sel.appendChild(opt);
+  });
+  const optOther = document.createElement("option");
+  optOther.value = "__custom__";
+  optOther.textContent = "Add new kind…";
+  sel.appendChild(optOther);
+  // Restore previous selection if possible
+  if(prev && kinds.includes(prev)) sel.value = prev;
+  else if(kinds.length) sel.value = kinds[0];
+  custom.style.display = (sel.value==="__custom__") ? "block" : "none";
+  if(sel.value!=="__custom__") custom.value = "";
+  sel.onchange = () => {
+    custom.style.display = (sel.value==="__custom__") ? "block" : "none";
+    if(sel.value!=="__custom__") custom.value = "";
+  };
+}
+
+function resolveKindFromUI(){
+  const sel = $("add-kind-select");
+  const custom = $("add-kind-custom");
+  if(!sel) return "";
+  if(sel.value === "__custom__") return (custom?.value||"").trim();
+  return (sel.value||"").trim();
+}
+
+function addInventoryItem(targetMsg=null){
   const cat=$("add-cat").value;
-  const kind=$("add-kind").value.trim();
+  const kind=resolveKindFromUI();
   const label=$("add-label").value.trim() || kind;
   const msg = targetMsg || $("add-msg");
-  if(!kind){ msg.textContent="Kind is required (must match cocktails)."; return; }
+  if(!kind){ msg.textContent="Kind is required (used by cocktails)."; return; }
   ensureUserInv();
+  // Persist custom kind if user typed a new one
+  if($("add-kind-select")?.value === "__custom__"){
+    USER.inventory.kinds = USER.inventory.kinds || [];
+    if(!USER.inventory.kinds.includes(kind)) USER.inventory.kinds.push(kind);
+  }
   USER.inventory.items.push({category:cat, kind, label, have:true});
   saveUser();
-  $("add-kind").value=""; $("add-label").value="";
+  // Reset UI
+  $("add-label").value="";
+  const sel = $("add-kind-select");
+  const custom = $("add-kind-custom");
+  if(sel){ sel.value = kind; }
+  if(custom){ custom.value = ""; custom.style.display = "none"; }
+  initKindDropdown();
   msg.textContent=`Added: ${label}`;
   renderInventory();
   initWebSuggest(); renderCocktails();
@@ -536,8 +597,12 @@ function addInventoryItem(){
 async function scanBarcodeToInput(targetInput, targetMsg){
   const msg = targetMsg || $("add-msg");
   msg.textContent="";
-  if(!("BarcodeDetector" in window)){ msg.textContent="Barcode scanning not supported on this browser/device."; return; }
-  const detector=new BarcodeDetector({formats:["ean_13","ean_8","code_128","qr_code","upc_a","upc_e"]});
+  if(!("BarcodeDetector" in window)){
+    msg.textContent="Barcode scanning not supported on this browser/device.";
+    return;
+  }
+
+  const detector = new BarcodeDetector({formats:["ean_13","ean_8","code_128","qr_code","upc_a","upc_e"]});
   const dlg=document.createElement("dialog");
   dlg.style.border="none"; dlg.style.borderRadius="18px"; dlg.style.padding="0"; dlg.style.background="#141414"; dlg.style.width="min(720px,92vw)";
   dlg.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 12px 0;color:#f2f2f2">
@@ -545,15 +610,20 @@ async function scanBarcodeToInput(targetInput, targetMsg){
       <div style="padding:12px"><video id="v" autoplay playsinline style="width:100%;border-radius:14px;border:1px solid #2a2a2a"></video>
       <div class="small" style="margin-top:8px">Point the camera at a barcode. It will fill the label field.</div></div>`;
   document.body.appendChild(dlg); dlg.showModal();
+
   let stream=null, raf=null;
   const video=dlg.querySelector("#v");
   const close=async()=>{ if(raf) cancelAnimationFrame(raf); if(stream) stream.getTracks().forEach(t=>t.stop()); dlg.close(); dlg.remove(); };
   dlg.querySelector("#x").addEventListener("click", close);
+
   try{
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
-    video.srcObject=stream; await video.play();
+    video.srcObject=stream;
+    await video.play();
+
     const canvas=document.createElement("canvas");
     const ctx=canvas.getContext("2d",{willReadFrequently:true});
+
     const tick=async()=>{
       if(video.readyState>=2){
         canvas.width=video.videoWidth; canvas.height=video.videoHeight;
@@ -563,32 +633,51 @@ async function scanBarcodeToInput(targetInput, targetMsg){
           const codes=await detector.detect(bitmap);
           if(codes && codes.length){
             const code=codes[0].rawValue||"";
-            if(targetInput){ targetInput.value=code; } else { $("add-label").value=code; }
-  const info = await lookupBarcodeOnline(code);
-  if(info){
-    const guessText = `${info.name} ${info.brands} ${info.categories}`.trim();
-    const kindGuess = inferKindFromText(guessText) || inferKindFromText(info.categories) || null;
-    const labelGuess = (info.name || info.brands || code).trim();
-    if(targetInput){ targetInput.value = labelGuess; } else { $("add-label").value = labelGuess; }
-    if(kindGuess){
-      const kindEl = $("add-kind"); const catEl = $("add-cat");
-      if(kindEl) kindEl.value = kindGuess;
-      if(catEl) catEl.value = inferCategoryFromKind(kindGuess);
-      msg.textContent = `Found: ${labelGuess} • Suggested: ${kindGuess}. Check/edit before adding.`;
-    }else{
-      msg.textContent = `Found: ${labelGuess}. Check/edit before adding.`;
-    }
-  }else{
-    msg.textContent = `Scanned: ${code} (edit to actual bottle name)`;
-  }
-
             msg.textContent=`Scanned: ${code} — looking up…`;
-            await close(); return;
+
+            // Fill something immediately
+            if(targetInput){ targetInput.value=code; } else { $("add-label").value=code; }
+
+            // Enrich online (best-effort)
+            const info = await lookupBarcodeOnline(code);
+            if(info){
+              const guessText = `${info.name} ${info.brands} ${info.categories}`.trim();
+              const kindGuess = inferKindFromText(guessText) || inferKindFromText(info.categories) || null;
+              const labelGuess = (info.name || info.brands || code).trim();
+              if(targetInput){ targetInput.value = labelGuess; } else { $("add-label").value = labelGuess; }
+
+              if(kindGuess){
+                const catEl = $("add-cat");
+                if(catEl) catEl.value = inferCategoryFromKind(kindGuess);
+
+                const sel = $("add-kind-select");
+                const custom = $("add-kind-custom");
+                if(sel){
+                  const has = Array.from(sel.options||[]).some(o=>o.value===kindGuess);
+                  if(has){
+                    sel.value = kindGuess;
+                    if(custom){ custom.value=""; custom.style.display="none"; }
+                  }else{
+                    sel.value = "__custom__";
+                    if(custom){ custom.value = kindGuess; custom.style.display = "block"; }
+                  }
+                }
+                msg.textContent = `Found: ${labelGuess} • Suggested kind: ${kindGuess}. Check/edit then press Add.`;
+              }else{
+                msg.textContent = `Found: ${labelGuess}. Check/edit before adding.`;
+              }
+            }else{
+              msg.textContent = `Scanned: ${code} (edit to actual bottle name)`;
+            }
+
+            await close();
+            return;
           }
-        }catch(e){}
+        }catch(e){ /* ignore frame errors */ }
       }
       raf=requestAnimationFrame(tick);
     };
+
     tick();
   }catch(e){
     msg.textContent="Could not access camera. Check permissions.";
