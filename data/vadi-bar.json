@@ -129,12 +129,6 @@
       },
       {
         "category": "modifier",
-        "kind": "Dry vermouth",
-        "label": "Dolin Dry Vermouth",
-        "have": true
-      },
-      {
-        "category": "modifier",
         "kind": "Sweet vermouth",
         "label": "Martini Bianco",
         "have": true
