@@ -121,6 +121,12 @@
         "label": "Carpano Antica Formula",
         "have": true
       },
+ {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Dolin",
+        "have": true
+      },
       {
         "category": "modifier",
         "kind": "Sweet vermouth",
