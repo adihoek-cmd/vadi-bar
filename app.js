@@ -700,14 +700,6 @@ function addInventoryItem(targetMsg=null){
   initCocktailAdd();
   initWheel();
 }
-  initKindDropdown();
-  msg.textContent=`Added: ${label}`;
-  renderInventory();
-  initWebSuggest(); renderCocktails();
-  initLinkImporter();
-  initCocktailAdd();
-  initWheel();
-}
 
 async function scanBarcodeToInput(targetInput, targetMsg){
   const msg = targetMsg || $("add-msg");
