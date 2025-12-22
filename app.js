@@ -565,13 +565,18 @@ function getAllKinds(category){
     }
   });
   
-  // From cocktails (ingredients kinds) - no category filter since ingredients don't have categories
-  (allCocktails()||[]).forEach(c=>{
-    (c.ingredients||[]).forEach(ing=>{ if(ing?.kind) set.add(String(ing.kind).trim()); });
-  });
+  // From cocktails (ingredients kinds) - only add if no category filter
+  // (since ingredients don't have categories assigned)
+  if(!category){
+    (allCocktails()||[]).forEach(c=>{
+      (c.ingredients||[]).forEach(ing=>{ if(ing?.kind) set.add(String(ing.kind).trim()); });
+    });
+  }
   
-  // User-defined kinds list (if any)
-  (USER.inventory.kinds||[]).forEach(k=>{ if(k) set.add(String(k).trim()); });
+  // User-defined kinds list (if any) - only add if no category filter
+  if(!category){
+    (USER.inventory.kinds||[]).forEach(k=>{ if(k) set.add(String(k).trim()); });
+  }
   
   // If no kinds were discovered, use fallback for the specific category
   if(set.size === 0 && category && FALLBACK_KINDS[category]){
