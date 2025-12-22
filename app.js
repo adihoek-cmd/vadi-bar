@@ -452,11 +452,22 @@ function setView(which){
   $("controls").style.display=(which==="cocktails")?"flex":"none";
   document.querySelectorAll(".navbtn").forEach(b=>b.classList.remove("active"));
   $(`nav-${which}`).classList.add("active");
-  if(which==="cocktails") { renderCocktails();
-  initLinkImporter(); initLinkImporter(); }
-  initCocktailAdd();
-  initWheel();
-  if(which==="inventory") { renderInventory(); initKindPicker(); }
+  if(which==="cocktails") {
+    renderCocktails();
+    initLinkImporter();
+    initCocktailAdd();
+  }
+
+  if(which==="inventory") {
+    renderInventory();
+    // Populate the "Kind" dropdown in the add form.
+    // A previous build called a non-existent initKindPicker(), which broke this.
+    initKindDropdown();
+  }
+
+  if(which==="wheel") initWheel();
+  if(which==="choice") renderChoice();
+
   initWebSuggest();
 }
 
@@ -542,8 +553,9 @@ function getAllKinds(){
     "Syrup",
     "Other"
   ];
-  // From inventory
-  (USER.inventory.items||[]).forEach(i=>{ if(i?.kind) set.add(i.kind.trim()); });
+  // From inventory (base + user)
+  (BASE?.inventory?.items||[]).forEach(i=>{ if(i?.kind) set.add(String(i.kind).trim()); });
+  (USER.inventory.items||[]).forEach(i=>{ if(i?.kind) set.add(String(i.kind).trim()); });
   // From cocktails (ingredients kinds)
   (COCKTAILS||[]).forEach(c=>{
     (c.ingredients||[]).forEach(ing=>{ if(ing?.kind) set.add(String(ing.kind).trim()); });
