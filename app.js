@@ -515,54 +515,84 @@ function clearRecipeForm(){
   $("r-msg").textContent="";
 }
 
-function getAllKinds(){
+function getAllKinds(category){
   ensureUserInv();
   const set = new Set();
-  // Fallback list so the Kind dropdown is never empty.
-  // These are the "kinds" used for cocktail ingredient matching.
-  const FALLBACK_KINDS = [
-    "Gin",
-    "Vodka",
-    "Bourbon",
-    "Rye whiskey",
-    "Blended Scotch",
-    "Peated Scotch",
-    "Single Malt Scotch",
-    "Irish whiskey",
-    "Cognac/Brandy",
-    "Rum",
-    "Tequila",
-    "Mezcal",
-    "Vermouth (Sweet)",
-    "Vermouth (Dry)",
-    "Aperitivo",
-    "Amaro",
-    "Liqueur",
-    "Bitters",
-    "Syrup",
-    "Other"
-  ];
-  // From inventory
-  (USER.inventory.items||[]).forEach(i=>{ if(i?.kind) set.add(i.kind.trim()); });
-  // From cocktails (ingredients kinds)
+  // Fallback lists by category so the Kind dropdown is never empty.
+  const FALLBACK_KINDS = {
+    spirit: [
+      "Gin",
+      "Vodka",
+      "Bourbon",
+      "Rye whiskey",
+      "Blended Scotch",
+      "Peated Scotch",
+      "Single Malt Scotch",
+      "Irish whiskey",
+      "Cognac/Brandy",
+      "Rum",
+      "Tequila",
+      "Mezcal"
+    ],
+    modifier: [
+      "Vermouth (Sweet)",
+      "Vermouth (Dry)",
+      "Aperitivo",
+      "Amaro",
+      "Liqueur",
+      "Bitters"
+    ],
+    syrup: [
+      "Simple syrup",
+      "Demerara syrup",
+      "Honey syrup",
+      "Grenadine"
+    ],
+    pantry: [
+      "Lime juice",
+      "Lemon juice",
+      "Orange juice",
+      "Egg white",
+      "Sugar",
+      "Salt"
+    ]
+  };
+  
+  // From inventory - filter by category if provided
+  (USER.inventory.items||[]).forEach(i=>{ 
+    if(i?.kind && (!category || i.category === category)) {
+      set.add(i.kind.trim()); 
+    }
+  });
+  
+  // From cocktails (ingredients kinds) - no category filter since ingredients don't have categories
   (allCocktails()||[]).forEach(c=>{
     (c.ingredients||[]).forEach(ing=>{ if(ing?.kind) set.add(String(ing.kind).trim()); });
   });
+  
   // User-defined kinds list (if any)
   (USER.inventory.kinds||[]).forEach(k=>{ if(k) set.add(String(k).trim()); });
-  // If no kinds were discovered (e.g., first load or data not yet initialized), use fallback.
-  if(set.size === 0){
-    FALLBACK_KINDS.forEach(k=>set.add(k));
+  
+  // If no kinds were discovered, use fallback for the specific category
+  if(set.size === 0 && category && FALLBACK_KINDS[category]){
+    FALLBACK_KINDS[category].forEach(k=>set.add(k));
+  } else if(set.size === 0) {
+    // If no category specified, use all fallbacks
+    Object.values(FALLBACK_KINDS).flat().forEach(k=>set.add(k));
   }
+  
   return Array.from(set).filter(Boolean).sort((a,b)=>a.localeCompare(b));
 }
 
 function initKindDropdown(){
   const sel = $("add-kind-select");
   const custom = $("add-kind-custom");
+  const catSel = $("add-cat");
   if(!sel || !custom) return;
+  
+  const category = catSel ? catSel.value : null;
   const prev = sel.value;
-  const kinds = getAllKinds();
+  const kinds = getAllKinds(category);
   sel.innerHTML = "";
   kinds.forEach(k=>{
     const opt = document.createElement("option");
@@ -585,6 +615,14 @@ function initKindDropdown(){
     custom.style.display = (sel.value==="__custom__") ? "block" : "none";
     if(sel.value!=="__custom__") custom.value = "";
   };
+  
+  // Add event listener to category selector to update kinds when category changes
+  if(catSel && !catSel._kindDropdownWired){
+    catSel._kindDropdownWired = true;
+    catSel.addEventListener("change", ()=>{
+      initKindDropdown();
+    });
+  }
 }
 
 function resolveKindFromUI(){
