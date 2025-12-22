@@ -7,48 +7,6 @@ let INV_MISSING_ONLY=false;
 const $=id=>document.getElementById(id);
 const normalize=s=>(s||"").toLowerCase();
 
-// Find an existing kind that matches (case-insensitive, format-insensitive)
-function findMatchingKind(inputKind, category = null){
-  if(!inputKind) return null;
-  ensureUserInv();
-  
-  const input = inputKind.trim().toLowerCase();
-  
-  // Common variations to check
-  const variations = [
-    inputKind.trim(),
-    // Sweet vermouth variations
-    ...(input.includes('sweet') && input.includes('vermouth') ? ['SWEET VERMOUTH', 'Sweet vermouth', 'Vermouth (Sweet)', 'Vermouth (sweet)'] : []),
-    // Dry vermouth variations
-    ...(input.includes('dry') && input.includes('vermouth') ? ['DRY VERMOUTH', 'Dry vermouth', 'Vermouth (Dry)', 'Vermouth (dry)'] : []),
-  ];
-  
-  // Check all existing kinds in inventory
-  const existingKinds = (USER.inventory.items || [])
-    .filter(i => !category || i.category === category)
-    .map(i => i.kind)
-    .filter(Boolean);
-  
-  // First, try exact case-insensitive match
-  for(const existing of existingKinds){
-    if(existing.toLowerCase() === input){
-      return existing;
-    }
-  }
-  
-  // Then try variations
-  for(const variation of variations){
-    for(const existing of existingKinds){
-      if(existing.toLowerCase() === variation.toLowerCase()){
-        return existing;
-      }
-    }
-  }
-  
-  // No match found, return the input as-is
-  return inputKind.trim();
-}
-
 function slugify(name){return (name||"").toLowerCase().trim().replace(/['"]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");}
 function fmtAmt(x){if(x===undefined||x===null) return ""; if(typeof x==="number") return `${x} ml`; return `${x}`;}
 
@@ -362,9 +320,6 @@ function renderInventory(){
         }
       }
 
-      // Find matching existing kind to avoid duplicates
-      kind = findMatchingKind(kind, INV_CAT);
-
       ensureUserInv();
       USER.inventory.items.push({category:INV_CAT, kind, label, have:true});
       saveUser();
@@ -564,55 +519,38 @@ function getAllKinds(category){
   ensureUserInv();
   const set = new Set();
   
-  // Fallback lists by category
+  // Fallback lists by category - used when no existing kinds found
   const FALLBACK_KINDS = {
-    spirit: [
-      "Gin", "Vodka", "Bourbon", "Rye whiskey", "Blended Scotch",
-      "Peated Scotch", "Single Malt Scotch", "Irish whiskey",
-      "Cognac/Brandy", "Rum", "Tequila", "Mezcal"
-    ],
-    modifier: [
-      "Vermouth (Sweet)", "Vermouth (Dry)", "Aperitivo", 
-      "Amaro", "Liqueur", "Bitters"
-    ],
-    syrup: [
-      "Simple syrup", "Demerara syrup", "Honey syrup", "Grenadine"
-    ],
-    pantry: [
-      "Lime juice", "Lemon juice", "Orange juice", 
-      "Egg white", "Sugar", "Salt"
-    ]
+    spirit: ["Gin", "Vodka", "Bourbon", "Rye whiskey", "Blended Scotch", "Peated Scotch", "Single Malt Scotch", "Irish whiskey", "Cognac/Brandy", "Rum", "Tequila", "Mezcal"],
+    modifier: ["Vermouth (Sweet)", "Vermouth (Dry)", "Aperitivo", "Amaro", "Liqueur", "Bitters"],
+    syrup: ["Simple syrup", "Demerara syrup", "Honey syrup", "Grenadine"],
+    pantry: ["Lime juice", "Lemon juice", "Orange juice", "Egg white", "Sugar", "Salt"]
   };
   
-  // From inventory - filter by category if provided
+  // From inventory - only include items matching the selected category
   (USER.inventory.items||[]).forEach(i=>{ 
     if(i?.kind && (!category || i.category === category)) {
       set.add(i.kind.trim()); 
     }
   });
   
-  // From cocktails (ingredients kinds) - only if no category filter
+  // From cocktails ingredients - only if NO category filter (viewing all)
   if(!category){
     (allCocktails()||[]).forEach(c=>{
-      (c.ingredients||[]).forEach(ing=>{ 
-        if(ing?.kind) set.add(String(ing.kind).trim()); 
-      });
+      (c.ingredients||[]).forEach(ing=>{ if(ing?.kind) set.add(String(ing.kind).trim()); });
     });
+    // User-defined custom kinds - only if no category filter
+    (USER.inventory.kinds||[]).forEach(k=>{ if(k) set.add(String(k).trim()); });
   }
   
-  // User-defined kinds list (if any) - only if no category filter
-  if(!category){
-    (USER.inventory.kinds||[]).forEach(k=>{ 
-      if(k) set.add(String(k).trim()); 
-    });
-  }
-  
-  // If no kinds were discovered, use fallback for the specific category
-  if(set.size === 0 && category && FALLBACK_KINDS[category]){
-    FALLBACK_KINDS[category].forEach(k=>set.add(k));
-  } else if(set.size === 0) {
-    // If no category specified, use all fallbacks
-    Object.values(FALLBACK_KINDS).flat().forEach(k=>set.add(k));
+  // If no kinds found, use fallback list for this category
+  if(set.size === 0){
+    if(category && FALLBACK_KINDS[category]){
+      FALLBACK_KINDS[category].forEach(k=>set.add(k));
+    } else if(!category) {
+      // No category specified - use all fallbacks
+      Object.values(FALLBACK_KINDS).flat().forEach(k=>set.add(k));
+    }
   }
   
   return Array.from(set).filter(Boolean).sort((a,b)=>a.localeCompare(b));
@@ -624,9 +562,11 @@ function initKindDropdown(){
   const catSel = $("add-cat");
   if(!sel || !custom) return;
   
+  // Get kinds for the selected category
   const category = catSel ? catSel.value : null;
   const prev = sel.value;
   const kinds = getAllKinds(category);
+  
   sel.innerHTML = "";
   kinds.forEach(k=>{
     const opt = document.createElement("option");
@@ -638,6 +578,7 @@ function initKindDropdown(){
   optOther.value = "__custom__";
   optOther.textContent = "Add new kind…";
   sel.appendChild(optOther);
+  
   // Restore previous selection if possible
   if(prev && kinds.includes(prev)) sel.value = prev;
   else if(kinds.length) sel.value = kinds[0];
@@ -645,12 +586,13 @@ function initKindDropdown(){
   if(!sel.value) sel.value = "__custom__";
   custom.style.display = (sel.value==="__custom__") ? "block" : "none";
   if(sel.value!=="__custom__") custom.value = "";
+  
   sel.onchange = () => {
     custom.style.display = (sel.value==="__custom__") ? "block" : "none";
     if(sel.value!=="__custom__") custom.value = "";
   };
   
-  // Add event listener to category selector to update kinds when category changes
+  // Wire up category change listener to refresh kinds dropdown
   if(catSel && !catSel._kindDropdownWired){
     catSel._kindDropdownWired = true;
     catSel.addEventListener("change", ()=>{
@@ -669,15 +611,10 @@ function resolveKindFromUI(){
 
 function addInventoryItem(targetMsg=null){
   const cat=$("add-cat").value;
-  let kind=resolveKindFromUI();
+  const kind=resolveKindFromUI();
   const label=$("add-label").value.trim() || kind;
   const msg = targetMsg || $("add-msg");
   if(!kind){ msg.textContent="Kind is required (used by cocktails)."; return; }
-  
-  // Find matching existing kind to avoid duplicates
-  const matchedKind = findMatchingKind(kind, cat);
-  kind = matchedKind;
-  
   ensureUserInv();
   // Persist custom kind if user typed a new one
   if($("add-kind-select")?.value === "__custom__"){
