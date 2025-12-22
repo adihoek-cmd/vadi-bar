@@ -1,0 +1,890 @@
+{
+  "inventory": {
+    "items": [
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Askalon Arack (Extra Fine)",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Pernod Paris",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Pilavas Ouzo",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Sans Rival Ouzo",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Anise spirit",
+        "label": "Zoara Arak",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Aperol",
+        "label": "Aperol",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "B\u00e9n\u00e9dictine",
+        "label": "B\u00e9n\u00e9dictine",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Campari",
+        "label": "Campari",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cassis",
+        "label": "Cr\u00e8me de Cassis de Dijon",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cherry liqueur",
+        "label": "Cherry Heering",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Coffee liqueur",
+        "label": "Kahl\u00faa",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cointreau",
+        "label": "Cointreau",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Cream liqueur",
+        "label": "Baileys",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Drambuie",
+        "label": "Drambuie",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Fernet",
+        "label": "Fernet-Branca",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Grand Marnier",
+        "label": "Grand Marnier",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Green Chartreuse",
+        "label": "Green Chartreuse",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Herbal liqueur",
+        "label": "J\u00e4germeister",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Picon",
+        "label": "Picon Bi\u00e8re",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Carpano Antica Formula",
+        "have": true
+      },
+ {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Dolin",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Julius Vermut",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Martini Bianco",
+        "have": true
+      },
+      {
+        "category": "modifier",
+        "kind": "Sweet vermouth",
+        "label": "Martini Rosso",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Angostura bitters",
+        "label": "Angostura bitters",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Fresh lemon",
+        "label": "Fresh lemon",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Fresh lime",
+        "label": "Fresh lime",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Ice",
+        "label": "Ice",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Maple syrup",
+        "label": "Maple syrup",
+        "have": true
+      },
+      {
+        "category": "pantry",
+        "kind": "Orange (peel/twist)",
+        "label": "Orange (peel/twist)",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Aged rum",
+        "label": "Jung & Wulff Barbados Rum No.3",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Blended Scotch",
+        "label": "Compass Box Spice Tree",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Blended Scotch",
+        "label": "Talon\u2019s Select",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Bourbon",
+        "label": "Woodford Reserve Bourbon",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Cacha\u00e7a",
+        "label": "51 Cacha\u00e7a",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Cognac/Brandy",
+        "label": "Courvoisier VS",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Cognac/Brandy",
+        "label": "Torres 10",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Calypso Red Rum",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "El Supremo 8",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Kraken (spiced)",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Dark rum",
+        "label": "Smith & Cross",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Deer Premium Dry",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Deer Vegetable Dry",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Tanqueray No. Ten",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Tanqueray Rangpur",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Votanikon",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Gin",
+        "label": "Zohara Gin",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Mezcal",
+        "label": "Se Busca Mezcal Joven",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Peated Scotch",
+        "label": "Benriach The Smoky Twelve 12",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Peated Scotch",
+        "label": "Kilchoman Machir Bay",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Peated Scotch",
+        "label": "Laphroaig 10",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Peated Scotch",
+        "label": "Talisker 10",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Rakija",
+        "label": "Rakija Kru\u0161ka",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Rakija",
+        "label": "Rakija Medova\u010da",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Rye whiskey",
+        "label": "Woodford Reserve Rye",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Spiced rum",
+        "label": "Takamaka Zepis Kreol",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Spiced rum",
+        "label": "The Kraken Black Spiced Rum",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Cenote Ahumado",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Cenote A\u00f1ejo",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Don Julio 1942",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Jose Cuervo Especial",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Tequila",
+        "label": "Patr\u00f3n Silver",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Berlin Vodka",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "C\u00eeroc Vodka",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Ketel One Vodka",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Stoli Vanil",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Stolichnaya Vodka",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "Van Gogh A\u00e7a\u00ed Blueberry",
+        "have": true
+      },
+      {
+        "category": "spirit",
+        "kind": "Vodka",
+        "label": "\u017bubr\u00f3wka Palona",
+        "have": true
+      },
+      {
+        "category": "syrup",
+        "kind": "Honey-ginger syrup",
+        "label": "Homemade honey-ginger",
+        "have": true
+      },
+      {
+        "category": "syrup",
+        "kind": "Limoncello",
+        "label": "Homemade limoncello",
+        "have": true
+      },
+      {
+        "category": "syrup",
+        "kind": "Simple syrup (2:1)",
+        "label": "Homemade double simple",
+        "have": true
+      }
+    ]
+  },
+  "cocktails": [
+    {
+      "id": "negroni",
+      "name": "Negroni",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/negroni/",
+      "ingredients": [
+        {
+          "item": "Gin",
+          "amount_ml": 30,
+          "requires": "Gin"
+        },
+        {
+          "item": "Campari",
+          "amount_ml": 30,
+          "requires": "Campari"
+        },
+        {
+          "item": "Sweet vermouth",
+          "amount_ml": 30,
+          "requires": "Sweet vermouth"
+        }
+      ],
+      "garnish": "Orange peel",
+      "steps": [
+        "Add gin, Campari, and sweet vermouth to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large ice cube.",
+        "Express an orange peel over the drink and garnish."
+      ]
+    },
+    {
+      "id": "vieux-carre",
+      "name": "Vieux Carr\u00e9",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/vieux-carre/",
+      "ingredients": [
+        {
+          "item": "Rye whiskey",
+          "amount_ml": 22.5,
+          "requires": "Rye whiskey"
+        },
+        {
+          "item": "Cognac",
+          "amount_ml": 22.5,
+          "requires": "Cognac/Brandy"
+        },
+        {
+          "item": "Sweet vermouth",
+          "amount_ml": 22.5,
+          "requires": "Sweet vermouth"
+        },
+        {
+          "item": "B\u00e9n\u00e9dictine",
+          "amount_ml": 10,
+          "requires": "B\u00e9n\u00e9dictine"
+        },
+        {
+          "item": "Angostura bitters",
+          "amount": "2 dashes",
+          "requires": "Angostura bitters"
+        }
+      ],
+      "garnish": "Lemon peel (or cherry)",
+      "steps": [
+        "Add all ingredients to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over fresh ice.",
+        "Garnish with a lemon peel (or cherry)."
+      ]
+    },
+    {
+      "id": "penicillin",
+      "name": "Penicillin",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "shake+float",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/penicillin/",
+      "ingredients": [
+        {
+          "item": "Blended Scotch",
+          "amount_ml": 60,
+          "requires": "Blended Scotch"
+        },
+        {
+          "item": "Fresh lemon juice",
+          "amount_ml": 22.5,
+          "requires": "Fresh lemon"
+        },
+        {
+          "item": "Honey-ginger syrup",
+          "amount_ml": 15,
+          "requires": "Honey-ginger syrup"
+        },
+        {
+          "item": "Peated Scotch (float)",
+          "amount_ml": 7.5,
+          "requires": "Peated Scotch"
+        }
+      ],
+      "garnish": "Candied ginger (optional)",
+      "steps": [
+        "Shake blended Scotch, lemon juice, and honey-ginger syrup with ice.",
+        "Strain into a rocks glass over fresh ice.",
+        "Float the peated Scotch on top."
+      ]
+    },
+    {
+      "id": "monte-carlo",
+      "name": "Monte Carlo",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/monte-carlo/",
+      "ingredients": [
+        {
+          "item": "Rye whiskey",
+          "amount_ml": 60,
+          "requires": "Rye whiskey"
+        },
+        {
+          "item": "B\u00e9n\u00e9dictine",
+          "amount_ml": 15,
+          "requires": "B\u00e9n\u00e9dictine"
+        },
+        {
+          "item": "Angostura bitters",
+          "amount": "1 dash",
+          "requires": "Angostura bitters"
+        }
+      ],
+      "garnish": "Lemon twist (optional)",
+      "steps": [
+        "Add rye, B\u00e9n\u00e9dictine, and bitters to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large cube."
+      ]
+    },
+    {
+      "id": "sidecar",
+      "name": "Sidecar",
+      "liked": true,
+      "house": true,
+      "glass": "coupe",
+      "method": "shake",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/sidecar/",
+      "ingredients": [
+        {
+          "item": "Cognac",
+          "amount_ml": 50,
+          "requires": "Cognac/Brandy"
+        },
+        {
+          "item": "Cointreau",
+          "amount_ml": 22.5,
+          "requires": "Cointreau"
+        },
+        {
+          "item": "Fresh lemon juice",
+          "amount_ml": 22.5,
+          "requires": "Fresh lemon"
+        }
+      ],
+      "garnish": "Orange twist (sugar rim optional)",
+      "steps": [
+        "Shake cognac, Cointreau, and lemon juice with ice.",
+        "Fine-strain into a chilled coupe.",
+        "Garnish with an orange twist."
+      ]
+    },
+    {
+      "id": "margarita",
+      "name": "Margarita",
+      "liked": true,
+      "house": true,
+      "glass": "margarita",
+      "method": "shake",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/margarita/",
+      "ingredients": [
+        {
+          "item": "Tequila",
+          "amount_ml": 50,
+          "requires": "Tequila"
+        },
+        {
+          "item": "Cointreau",
+          "amount_ml": 22.5,
+          "requires": "Cointreau"
+        },
+        {
+          "item": "Fresh lime juice",
+          "amount_ml": 22.5,
+          "requires": "Fresh lime"
+        }
+      ],
+      "garnish": "Lime wheel (salt rim optional)",
+      "steps": [
+        "Shake tequila, Cointreau, and lime juice with ice.",
+        "Strain into a rocks glass over fresh ice (salt rim optional).",
+        "Garnish with a lime wheel."
+      ]
+    },
+    {
+      "id": "rusty-nail",
+      "name": "Rusty Nail",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/rusty-nail/",
+      "ingredients": [
+        {
+          "item": "Scotch",
+          "amount_ml": 45,
+          "requires": "Blended Scotch"
+        },
+        {
+          "item": "Drambuie",
+          "amount_ml": 22.5,
+          "requires": "Drambuie"
+        }
+      ],
+      "garnish": "Lemon twist (optional)",
+      "steps": [
+        "Add Scotch and Drambuie to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large cube."
+      ]
+    },
+    {
+      "id": "bb",
+      "name": "B&B (Brandy & B\u00e9n\u00e9dictine)",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Classic 1:1",
+      "source_url": "https://www.thespruceeats.com/brandy-and-benedictine-recipe-759285",
+      "ingredients": [
+        {
+          "item": "Cognac/Brandy",
+          "amount_ml": 45,
+          "requires": "Cognac/Brandy"
+        },
+        {
+          "item": "B\u00e9n\u00e9dictine",
+          "amount_ml": 45,
+          "requires": "B\u00e9n\u00e9dictine"
+        }
+      ],
+      "garnish": "Lemon twist (optional)",
+      "steps": [
+        "Add brandy and B\u00e9n\u00e9dictine to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass (over a large cube or serve up)."
+      ]
+    },
+    {
+      "id": "maple-old-fashioned",
+      "name": "Maple Old Fashioned (Rum)",
+      "liked": true,
+      "house": true,
+      "glass": "rocks",
+      "method": "stir",
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/maple-old-fashioned/",
+      "ingredients": [
+        {
+          "item": "Dark rum",
+          "amount_ml": 60,
+          "requires": "Dark rum"
+        },
+        {
+          "item": "Maple syrup",
+          "amount_ml": 15,
+          "requires": "Maple syrup"
+        },
+        {
+          "item": "Angostura bitters",
+          "amount": "2 dashes",
+          "requires": "Angostura bitters"
+        }
+      ],
+      "garnish": "Orange twist",
+      "steps": [
+        "Add rum, maple syrup, and bitters to a mixing glass with ice.",
+        "Stir until well-chilled.",
+        "Strain into a rocks glass over a large ice cube.",
+        "Garnish with an orange twist."
+      ]
+    },
+    {
+      "id": "boulevardier",
+      "name": "Boulevardier",
+      "glass": "rocks",
+      "method": "stir",
+      "liked": true,
+      "house": false,
+      "ingredients": [
+        {
+          "item": "Bourbon or Rye",
+          "amount_ml": 37
+        },
+        {
+          "item": "Campari",
+          "amount_ml": 30
+        },
+        {
+          "item": "Sweet vermouth",
+          "amount_ml": 30
+        }
+      ],
+      "steps": [
+        "Add all ingredients to a mixing glass with ice.",
+        "Stir until well chilled.",
+        "Strain over fresh ice in a rocks glass.",
+        "Garnish with an orange twist."
+      ],
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/boulevardier/"
+    },
+    {
+      "id": "gold-rush",
+      "name": "Gold Rush",
+      "glass": "rocks",
+      "method": "shake",
+      "liked": true,
+      "house": false,
+      "ingredients": [
+        {
+          "item": "Bourbon",
+          "amount_ml": 60
+        },
+        {
+          "item": "Lemon juice",
+          "amount_ml": 22
+        },
+        {
+          "item": "Honey syrup",
+          "amount_ml": 22
+        }
+      ],
+      "steps": [
+        "Add all ingredients to a shaker with ice.",
+        "Shake until well chilled.",
+        "Strain over fresh ice in a rocks glass."
+      ],
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/gold-rush/"
+    },
+    {
+      "id": "hot-toddy",
+      "name": "Hot Toddy",
+      "glass": "mug",
+      "method": "build",
+      "liked": false,
+      "house": false,
+      "ingredients": [
+        {
+          "item": "Whiskey (bourbon/rye/Irish/scotch)",
+          "amount_ml": 59
+        },
+        {
+          "item": "Lemon juice (fresh)",
+          "amount_ml": 7
+        },
+        {
+          "item": "Demerara or brown sugar",
+          "amount_ml": null,
+          "amount_note": "2 tsp"
+        },
+        {
+          "item": "Boiling water",
+          "amount_ml": null,
+          "amount_note": "to fill"
+        },
+        {
+          "item": "Cloves",
+          "amount_ml": null,
+          "amount_note": "4"
+        },
+        {
+          "item": "Lemon peel or wheel",
+          "amount_ml": null,
+          "amount_note": "1"
+        }
+      ],
+      "steps": [
+        "Warm a mug with boiling water, then discard.",
+        "Stud the lemon peel/wheel with cloves.",
+        "Add sugar to the mug and fill about halfway with fresh boiling water; stir to dissolve.",
+        "Add the clove-studded lemon and the whiskey; stir.",
+        "Serve hot."
+      ],
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/hot-toddy/"
+    },
+    {
+      "id": "espresso-martini",
+      "name": "Espresso Martini",
+      "glass": "cocktail",
+      "method": "shake",
+      "liked": true,
+      "house": false,
+      "ingredients": [
+        {
+          "item": "Vodka",
+          "amount_ml": 59
+        },
+        {
+          "item": "Coffee liqueur",
+          "amount_ml": 15
+        },
+        {
+          "item": "Espresso (fresh, cooled)",
+          "amount_ml": 30
+        },
+        {
+          "item": "Simple syrup",
+          "amount_ml": 7
+        },
+        {
+          "item": "Coffee beans",
+          "amount_ml": null,
+          "amount_note": "garnish (3)"
+        }
+      ],
+      "steps": [
+        "Add vodka, coffee liqueur, espresso and simple syrup to a shaker with ice.",
+        "Shake hard until very cold and foamy.",
+        "Double-strain into a chilled cocktail glass.",
+        "Garnish with 3 coffee beans."
+      ],
+      "source": "Liquor.com",
+      "source_url": "https://www.liquor.com/recipes/espresso-martini-2/"
+    }
+  ]
+}
