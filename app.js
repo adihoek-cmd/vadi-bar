@@ -545,7 +545,7 @@ function getAllKinds(){
   // From inventory
   (USER.inventory.items||[]).forEach(i=>{ if(i?.kind) set.add(i.kind.trim()); });
   // From cocktails (ingredients kinds)
-  (COCKTAILS||[]).forEach(c=>{
+  (allCocktails()||[]).forEach(c=>{
     (c.ingredients||[]).forEach(ing=>{ if(ing?.kind) set.add(String(ing.kind).trim()); });
   });
   // User-defined kinds list (if any)
@@ -767,7 +767,6 @@ async function loadBase(){
 async function init(){
   loadUser();
   await loadBase();
-  initKindDropdown();
   renderCocktails();
   initLinkImporter();
   initCocktailAdd();
