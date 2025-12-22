@@ -7,6 +7,49 @@ let INV_MISSING_ONLY=false;
 const $=id=>document.getElementById(id);
 const normalize=s=>(s||"").toLowerCase();
 
+// Normalize kind names to avoid duplicates due to casing/formatting differences
+function normalizeKind(kind){
+  if(!kind) return "";
+  let normalized = kind.trim();
+  
+  // Common mappings to standardize names
+  const mappings = {
+    // Vermouth variations
+    "sweet vermouth": "Vermouth (Sweet)",
+    "vermouth sweet": "Vermouth (Sweet)",
+    "red vermouth": "Vermouth (Sweet)",
+    "dry vermouth": "Vermouth (Dry)",
+    "vermouth dry": "Vermouth (Dry)",
+    "white vermouth": "Vermouth (Dry)",
+    
+    // Common spirits
+    "whiskey": "Whiskey",
+    "whisky": "Whiskey",
+    "scotch": "Blended Scotch",
+    "cognac": "Cognac/Brandy",
+    "brandy": "Cognac/Brandy",
+    
+    // Modifiers
+    "campari": "Aperitivo",
+    "aperol": "Aperitivo",
+    
+    // Syrups
+    "simple": "Simple syrup",
+    "demerara": "Demerara syrup",
+    "honey": "Honey syrup"
+  };
+  
+  const lower = normalized.toLowerCase();
+  if(mappings[lower]){
+    return mappings[lower];
+  }
+  
+  // Capitalize first letter of each word for consistency
+  return normalized.split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
 function slugify(name){return (name||"").toLowerCase().trim().replace(/['"]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");}
 function fmtAmt(x){if(x===undefined||x===null) return ""; if(typeof x==="number") return `${x} ml`; return `${x}`;}
 
@@ -320,6 +363,9 @@ function renderInventory(){
         }
       }
 
+      // Normalize the kind to avoid duplicates
+      kind = normalizeKind(kind);
+
       ensureUserInv();
       USER.inventory.items.push({category:INV_CAT, kind, label, have:true});
       saveUser();
@@ -561,7 +607,7 @@ function getAllKinds(category){
   // From inventory - filter by category if provided
   (USER.inventory.items||[]).forEach(i=>{ 
     if(i?.kind && (!category || i.category === category)) {
-      set.add(i.kind.trim()); 
+      set.add(normalizeKind(i.kind)); 
     }
   });
   
@@ -569,13 +615,17 @@ function getAllKinds(category){
   // (since ingredients don't have categories assigned)
   if(!category){
     (allCocktails()||[]).forEach(c=>{
-      (c.ingredients||[]).forEach(ing=>{ if(ing?.kind) set.add(String(ing.kind).trim()); });
+      (c.ingredients||[]).forEach(ing=>{ 
+        if(ing?.kind) set.add(normalizeKind(String(ing.kind))); 
+      });
     });
   }
   
   // User-defined kinds list (if any) - only add if no category filter
   if(!category){
-    (USER.inventory.kinds||[]).forEach(k=>{ if(k) set.add(String(k).trim()); });
+    (USER.inventory.kinds||[]).forEach(k=>{ 
+      if(k) set.add(normalizeKind(String(k))); 
+    });
   }
   
   // If no kinds were discovered, use fallback for the specific category
@@ -640,10 +690,14 @@ function resolveKindFromUI(){
 
 function addInventoryItem(targetMsg=null){
   const cat=$("add-cat").value;
-  const kind=resolveKindFromUI();
+  let kind=resolveKindFromUI();
   const label=$("add-label").value.trim() || kind;
   const msg = targetMsg || $("add-msg");
   if(!kind){ msg.textContent="Kind is required (used by cocktails)."; return; }
+  
+  // Normalize the kind to avoid duplicates
+  kind = normalizeKind(kind);
+  
   ensureUserInv();
   // Persist custom kind if user typed a new one
   if($("add-kind-select")?.value === "__custom__"){
