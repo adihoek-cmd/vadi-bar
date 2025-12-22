@@ -7,47 +7,46 @@ let INV_MISSING_ONLY=false;
 const $=id=>document.getElementById(id);
 const normalize=s=>(s||"").toLowerCase();
 
-// Normalize kind names to avoid duplicates due to casing/formatting differences
-function normalizeKind(kind){
-  if(!kind) return "";
-  let normalized = kind.trim();
+// Find an existing kind that matches (case-insensitive, format-insensitive)
+function findMatchingKind(inputKind, category = null){
+  if(!inputKind) return null;
+  ensureUserInv();
   
-  // Common mappings to standardize names
-  const mappings = {
-    // Vermouth variations
-    "sweet vermouth": "Vermouth (Sweet)",
-    "vermouth sweet": "Vermouth (Sweet)",
-    "red vermouth": "Vermouth (Sweet)",
-    "dry vermouth": "Vermouth (Dry)",
-    "vermouth dry": "Vermouth (Dry)",
-    "white vermouth": "Vermouth (Dry)",
-    
-    // Common spirits
-    "whiskey": "Whiskey",
-    "whisky": "Whiskey",
-    "scotch": "Blended Scotch",
-    "cognac": "Cognac/Brandy",
-    "brandy": "Cognac/Brandy",
-    
-    // Modifiers
-    "campari": "Aperitivo",
-    "aperol": "Aperitivo",
-    
-    // Syrups
-    "simple": "Simple syrup",
-    "demerara": "Demerara syrup",
-    "honey": "Honey syrup"
-  };
+  const input = inputKind.trim().toLowerCase();
   
-  const lower = normalized.toLowerCase();
-  if(mappings[lower]){
-    return mappings[lower];
+  // Common variations to check
+  const variations = [
+    inputKind.trim(),
+    // Sweet vermouth variations
+    ...(input.includes('sweet') && input.includes('vermouth') ? ['SWEET VERMOUTH', 'Sweet vermouth', 'Vermouth (Sweet)', 'Vermouth (sweet)'] : []),
+    // Dry vermouth variations
+    ...(input.includes('dry') && input.includes('vermouth') ? ['DRY VERMOUTH', 'Dry vermouth', 'Vermouth (Dry)', 'Vermouth (dry)'] : []),
+  ];
+  
+  // Check all existing kinds in inventory
+  const existingKinds = (USER.inventory.items || [])
+    .filter(i => !category || i.category === category)
+    .map(i => i.kind)
+    .filter(Boolean);
+  
+  // First, try exact case-insensitive match
+  for(const existing of existingKinds){
+    if(existing.toLowerCase() === input){
+      return existing;
+    }
   }
   
-  // Capitalize first letter of each word for consistency
-  return normalized.split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+  // Then try variations
+  for(const variation of variations){
+    for(const existing of existingKinds){
+      if(existing.toLowerCase() === variation.toLowerCase()){
+        return existing;
+      }
+    }
+  }
+  
+  // No match found, return the input as-is
+  return inputKind.trim();
 }
 
 function slugify(name){return (name||"").toLowerCase().trim().replace(/['"]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");}
@@ -363,8 +362,8 @@ function renderInventory(){
         }
       }
 
-      // Normalize the kind to avoid duplicates
-      kind = normalizeKind(kind);
+      // Find matching existing kind to avoid duplicates
+      kind = findMatchingKind(kind, INV_CAT);
 
       ensureUserInv();
       USER.inventory.items.push({category:INV_CAT, kind, label, have:true});
@@ -564,67 +563,47 @@ function clearRecipeForm(){
 function getAllKinds(category){
   ensureUserInv();
   const set = new Set();
-  // Fallback lists by category so the Kind dropdown is never empty.
+  
+  // Fallback lists by category
   const FALLBACK_KINDS = {
     spirit: [
-      "Gin",
-      "Vodka",
-      "Bourbon",
-      "Rye whiskey",
-      "Blended Scotch",
-      "Peated Scotch",
-      "Single Malt Scotch",
-      "Irish whiskey",
-      "Cognac/Brandy",
-      "Rum",
-      "Tequila",
-      "Mezcal"
+      "Gin", "Vodka", "Bourbon", "Rye whiskey", "Blended Scotch",
+      "Peated Scotch", "Single Malt Scotch", "Irish whiskey",
+      "Cognac/Brandy", "Rum", "Tequila", "Mezcal"
     ],
     modifier: [
-      "Vermouth (Sweet)",
-      "Vermouth (Dry)",
-      "Aperitivo",
-      "Amaro",
-      "Liqueur",
-      "Bitters"
+      "Vermouth (Sweet)", "Vermouth (Dry)", "Aperitivo", 
+      "Amaro", "Liqueur", "Bitters"
     ],
     syrup: [
-      "Simple syrup",
-      "Demerara syrup",
-      "Honey syrup",
-      "Grenadine"
+      "Simple syrup", "Demerara syrup", "Honey syrup", "Grenadine"
     ],
     pantry: [
-      "Lime juice",
-      "Lemon juice",
-      "Orange juice",
-      "Egg white",
-      "Sugar",
-      "Salt"
+      "Lime juice", "Lemon juice", "Orange juice", 
+      "Egg white", "Sugar", "Salt"
     ]
   };
   
   // From inventory - filter by category if provided
   (USER.inventory.items||[]).forEach(i=>{ 
     if(i?.kind && (!category || i.category === category)) {
-      set.add(normalizeKind(i.kind)); 
+      set.add(i.kind.trim()); 
     }
   });
   
-  // From cocktails (ingredients kinds) - only add if no category filter
-  // (since ingredients don't have categories assigned)
+  // From cocktails (ingredients kinds) - only if no category filter
   if(!category){
     (allCocktails()||[]).forEach(c=>{
       (c.ingredients||[]).forEach(ing=>{ 
-        if(ing?.kind) set.add(normalizeKind(String(ing.kind))); 
+        if(ing?.kind) set.add(String(ing.kind).trim()); 
       });
     });
   }
   
-  // User-defined kinds list (if any) - only add if no category filter
+  // User-defined kinds list (if any) - only if no category filter
   if(!category){
     (USER.inventory.kinds||[]).forEach(k=>{ 
-      if(k) set.add(normalizeKind(String(k))); 
+      if(k) set.add(String(k).trim()); 
     });
   }
   
@@ -695,8 +674,9 @@ function addInventoryItem(targetMsg=null){
   const msg = targetMsg || $("add-msg");
   if(!kind){ msg.textContent="Kind is required (used by cocktails)."; return; }
   
-  // Normalize the kind to avoid duplicates
-  kind = normalizeKind(kind);
+  // Find matching existing kind to avoid duplicates
+  const matchedKind = findMatchingKind(kind, cat);
+  kind = matchedKind;
   
   ensureUserInv();
   // Persist custom kind if user typed a new one
@@ -712,6 +692,14 @@ function addInventoryItem(targetMsg=null){
   const custom = $("add-kind-custom");
   if(sel){ sel.value = kind; }
   if(custom){ custom.value = ""; custom.style.display = "none"; }
+  initKindDropdown();
+  msg.textContent=`Added: ${label}`;
+  renderInventory();
+  initWebSuggest(); renderCocktails();
+  initLinkImporter();
+  initCocktailAdd();
+  initWheel();
+}
   initKindDropdown();
   msg.textContent=`Added: ${label}`;
   renderInventory();
